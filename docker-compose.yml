@@ -1,0 +1,12 @@
+version: '0.01'
+services:
+  nutrition-service:
+    build: services/nutrition
+    container_name: nutrition
+    ports:
+      - "8080:8080"
+  execise-service:
+    build: services/execise
+    container_name: execise
+    ports:
+      - "8081:8081"

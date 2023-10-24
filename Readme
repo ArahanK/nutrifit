@@ -1,0 +1,13 @@
+
+
+1. Install Docker Desktop
+
+2. Go to Services/Execise 
+
+3. Run mvn Install
+
+4. Go to Services/Nutrition
+
+5. Run mvn Install
+
+6. Run bash start.sh
