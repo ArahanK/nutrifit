@@ -22,6 +22,7 @@ class Exercise {
         this.type = type;
         this.duration = duration;
         this.intensisty = intensity;
+
     }
 
     //Getters and setters

@@ -26,5 +26,4 @@ public class NutritionApplication {
 		"JOIN macro_info m ON f.food_id = m.food_id " +
 		"WHERE f.food_name = ?";
 	}
-
 }

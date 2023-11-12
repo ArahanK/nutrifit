@@ -35,5 +35,4 @@ class NutritionController {
         // Logic to add food macro information to the local userlog database
         return;
     }
-    
 }
