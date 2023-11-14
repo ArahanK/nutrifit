@@ -36,16 +36,20 @@ class ExerciseController {
     }
 
     @GetMapping("/Food")
-    public List<List<String>> food(){
-        String SQL = "select NutrientID from `nutrient-amount` where FoodID = 2";
+    public List<String> food(){
+        String SQL = "select NutrientID from `nutrient-amount` where FoodID = 2 limit 10";
 
         List<String> temp = jdbcTemplate.queryForList(SQL, String.class);
 
-        List<List<String>> res = new ArrayList<>();
+        List<String> res = new ArrayList<>();
         
         for(int i = 0; i < temp.size(); i++){
             String SQL1 = "select NutrientName from nutrientName where NutrientID =" + temp.get(i);
-            res.add(jdbcTemplate.queryForList(SQL1, String.class));
+            List<String> curr = jdbcTemplate.queryForList(SQL1, String.class);
+            //return this from db in more effective way later
+            for(int j = 0; j < curr.size(); j++){
+                res.add(curr.get(0));
+            }
         }
        return res; 
     }
