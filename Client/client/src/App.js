@@ -48,10 +48,26 @@ export let data = {
   ],
 };
 
+export function temp(){
+  var t =  prompt("Enter a food please");
+  console.log(t);
+  var requestOptions = {
+    method: 'GET',
+    redirect: 'follow'
+  };
+  //alert()
+  fetch("http://localhost:8080/SpecificFood?food="+t, requestOptions)
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+}
+
 export function App() {
+
   return (
     <div>
       <h1>Charts</h1>
+      <button onClick={temp}>GET FOOD NAME</button>
       <button onClick={getChartData}>Get Chart Data</button>
 
       <Bar options={options} data={data} />

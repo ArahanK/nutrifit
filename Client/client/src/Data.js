@@ -6,6 +6,8 @@ export function getChartData(){
         method: 'GET',
         redirect: 'follow'
       }; 
+
+      
     fetch("http://localhost:8080/Food", requestOptions)
       .then((response) => response.json())
       .then((data) => {

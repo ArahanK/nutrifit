@@ -53,6 +53,18 @@ class ExerciseController {
         }
        return res; 
     }
+    @GetMapping("/SpecificFood")
+     public String specificFood(@RequestParam String food){
+        String SQL = "SELECT FoodID from cnf.Food WHERE FoodDescription LIKE '%"+food+"%' LIMIT 1";
+
+        List<String> temp = jdbcTemplate.queryForList(SQL, String.class);
+
+        return temp.get(0);
+        
+
+       //return "21"; 
+    }
+    
 }
 
 
