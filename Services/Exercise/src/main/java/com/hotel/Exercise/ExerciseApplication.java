@@ -1,4 +1,4 @@
-package com.hotel.Execise;
+package com.hotel.Exercise;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

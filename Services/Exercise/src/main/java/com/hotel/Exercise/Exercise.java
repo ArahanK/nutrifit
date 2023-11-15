@@ -1,4 +1,4 @@
-package com.hotel.Nutrition;
+package com.hotel.Exercise;
 
 import java.sql.Date;
 
