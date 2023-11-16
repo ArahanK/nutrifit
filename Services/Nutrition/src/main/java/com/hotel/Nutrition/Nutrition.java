@@ -4,30 +4,74 @@ import jakarta.annotation.Generated;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table; 
 
 @Entity
-@Table(name="Foods")
+@Table(name = "Foods")
 public class Nutrition {
-    @Id @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Integer FoodId;
-    @Column
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "foodID")
+    private Long foodID;
+
+    @Column(name = "name")
     private String name;
-    @Column
+
+    @Column(name = "calories")
     private int calories;
-    @Column
+    
+    @Column(name = "protein")
     private int protein;
-    @Column
+
+    @Column(name = "carbs")
     private int carbs;
-    @Column
+
+    @Column(name = "fat")
     private int fat;
 
     public Nutrition() {
         // Default constructor
     }
 
-    //Getters
+    public Nutrition(Long foodID, String name, int calories, int protein, int carbs, int fat) {
+        this.foodID = foodID;
+        this.name = name;
+        this.calories = calories;
+        this.protein = protein;
+        this.carbs = carbs;
+        this.fat = fat;
+        // Default constructor
+    }
+
+    // Setters
+    public void setFoodID(Long foodID){
+        this.foodID = foodID;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public void setCalories(int calories){
+        this.calories = calories;
+    }
+
+    public void setProtein(int protein){
+        this.protein = protein;
+    }
+
+    public void setCarbs(int carbs){
+        this.carbs = carbs;
+    }
+
+    public void setFat(int fat){
+        this.fat = fat;
+    }
+
+    // Getters
     public String getName(){
         return this.name;
     }
@@ -43,5 +87,4 @@ public class Nutrition {
     public int getFat(){
         return this.fat;
     }
- 
 }
