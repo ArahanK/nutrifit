@@ -2,10 +2,14 @@ package com.hotel.Nutrition;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import ch.qos.logback.core.testUtil.RandomUtil;
+
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -64,7 +68,22 @@ class ExerciseController {
 
        //return "21"; 
     }
-    
+
+    @GetMapping("/CaloriesBurnt")
+     public List<List<String>> caloriesBurnt(){
+        List<List<String>> res = new ArrayList<>();
+        List<String> days = new ArrayList<>();
+        days.add("Monday");days.add("Tuesday");days.add("Wednesday");days.add("Thursday");days.add("Friday");days.add("Saturday");days.add("Sunday");
+        List<String> caloriesBurned = new ArrayList<>();
+        Random rand = new Random();
+        for(int i = 0; i < 7; i++){
+            String t = "" + rand.nextInt(230);
+            caloriesBurned.add(t);
+        }
+        res.add(days);
+        res.add(caloriesBurned);
+        return res;
+    }
 }
 
 
