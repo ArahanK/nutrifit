@@ -7,5 +7,5 @@ docker-compose up --build -d
 
 #Start UI
 echo "Starting UI"
-cd view/src/main/java/com/hotel
-java Main.java
+cd Client/client
+npm start
