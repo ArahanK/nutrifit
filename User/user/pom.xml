@@ -8,16 +8,16 @@
 		<version>3.1.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.hotel</groupId>
-	<artifactId>Nutrition</artifactId>
-	<version>0.0.1</version>
-	<name>Nutrition</name>
-	<description>EECS3311 2023 Fall Project Nutrion Microservice</description>
+	<groupId>com.example</groupId>
+	<artifactId>user</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>user</name>
+	<description>User Microservice</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
-		<dependency>
+			<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jdbc</artifactId>
 		</dependency>
@@ -39,11 +39,6 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.31</version>
 		</dependency>
-		<!-- <dependency>
-    		<groupId>org.hibernate</groupId>
-  			<artifactId>hibernate-core</artifactId>
-			<version>5.6.5.Final</version>
-		</dependency> -->
 	</dependencies>
 
 	<build>
