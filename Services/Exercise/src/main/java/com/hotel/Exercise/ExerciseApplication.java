@@ -1,13 +1,12 @@
-package com.hotel.Execise;
+package com.hotel.Exercise;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ExeciseApplication {
+public class ExerciseApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ExeciseApplication.class, args);
+		SpringApplication.run(ExerciseApplication.class, args);
 	}
-
 }
