@@ -1,13 +1,13 @@
-package com.hotel.Nutrition;
+package com.hotel.Execise;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class NutritionApplication {
+public class ExeciseApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(NutritionApplication.class, args);
+		SpringApplication.run(ExeciseApplication.class, args);
 	}
 
 }
