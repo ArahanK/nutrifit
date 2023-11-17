@@ -24,6 +24,12 @@ public class User {
     @Column(name = "userID")
     private Long userID;
 
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "password")
+    private String password;
+
     @Column(name = "firstName")
     private String firstName;
 
@@ -39,8 +45,8 @@ public class User {
     @Column(name = "height")
     private double height;
 
-    @Column(name = "gender") //true=female false=male
-    private boolean gender;
+    @Column(name = "sex")
+    private boolean sex;
 
     // public void addFoodLogEntry(String date, String foodName, int quantity) {
     //     FoodLog entry = new FoodLog(date, foodName, quantity);

@@ -32,7 +32,7 @@ public class NutritionController {
 
     @GetMapping("/getFoods") //get all foods in db 
     public List<Nutrition> food() {
-        String SQL = "select * from `Foods`";
+        String SQL = "select * from `sampleFoods`";
         // System.out.println("SQL Query: " + SQL);
 
         List<Nutrition> temp = jdbcTemplate.query(SQL, new NutritionMapper());
@@ -46,7 +46,7 @@ public class NutritionController {
 
     @GetMapping("/food/{name}") //get food by name and return its nutrition info
     public Nutrition foodByName(@PathVariable String name) {
-        String SQL = "select * from `Foods` where name = '" + name + "'";
+        String SQL = "select * from `sampleFoods` where name = '" + name + "'";
         // System.out.println("SQL Query: " + SQL);
 
         List<Nutrition> temp = jdbcTemplate.query(SQL, new NutritionMapper());
