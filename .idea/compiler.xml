@@ -8,13 +8,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Nutrition" />
         <module name="view" />
-        <module name="Execise" />
+        <module name="Exercise" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="Execise" options="-parameters" />
+      <module name="Exercise" options="-parameters" />
       <module name="Nutrition" options="-parameters" />
     </option>
   </component>
