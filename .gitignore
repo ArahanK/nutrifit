@@ -49,7 +49,7 @@ build/
 .vscode/
 .DS_STORE
 
-#these /out files randomly appeared, so I added them to the gitignore 
+#these /out files randomly appeared, so I added them to the gitignore
 /out/production/nutrition/application.properties
 /out/production/nutrition/applicationContext.xml
 /out/production/nutrition/com/hotel/Nutrition/Nutrition.class
