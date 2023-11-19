@@ -1,4 +1,4 @@
-package com.example.user;
+package com.hotel.user;
 
 import java.util.Objects;
 
@@ -38,10 +38,10 @@ public class FoodLog {
         this.entries = new ArrayList<>();
     }
 
-    public void addEntry(String date, String foodName, int quantity) {
-        FoodEntry entry = new FoodEntry(date, foodName, quantity);
-        entries.add(entry);
-    }
+    // public void addEntry(String date, String foodName, int quantity) {
+    //     FoodEntry entry = new FoodEntry(date, foodName, quantity);
+    //     entries.add(entry);
+    // }
 
     public List<FoodEntry> getEntries() {
         return entries;
@@ -74,6 +74,8 @@ public class FoodLog {
                     '}';
         }
     }
+
+    
 
 }
 

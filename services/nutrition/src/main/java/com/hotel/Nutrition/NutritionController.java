@@ -23,7 +23,6 @@ public class NutritionController {
         this.nutritionRepository = nutritionRepository;
         this.jdbcTemplate = jdbcTemplate;
     }
-
     
     @GetMapping("/test")
     public String test() {
@@ -32,30 +31,36 @@ public class NutritionController {
 
     @GetMapping("/getFoods") //get all foods in db 
     public List<Nutrition> food() {
-        String SQL = "select * from `sampleFoods`";
-        // System.out.println("SQL Query: " + SQL);
-
-        List<Nutrition> temp = jdbcTemplate.query(SQL, new NutritionMapper());
-        // System.out.println("Number of results from the query: %d" + temp.size());
-        for (int i=0; i<temp.size(); i++) {
-            System.out.println("Results from the database: " + temp.get(i).getName());
-        }
-        // System.out.println("Results from the database: " + temp.toString());
-        return temp; 
+        String query = """
+                SELECT *
+                FROM `sampleFoods`
+            """;
+        return jdbcTemplate.query(query, new NutritionMapper());
     }
 
-    @GetMapping("/food/{name}") //get food by name and return its nutrition info
-    public Nutrition foodByName(@PathVariable String name) {
-        String SQL = "select * from `sampleFoods` where name = '" + name + "'";
-        // System.out.println("SQL Query: " + SQL);
+    // @GetMapping("/food/{name}") //get food by name and return its nutrition info
+    // public Nutrition foodByName(@PathVariable String name) {
+    //     String query = """
+    //         SELECT *
+    //         FROM `sampleFoods`
+    //         WHERE name = %s
+    //     """;
+    //     String SQL = String.format(query, name);
 
-        List<Nutrition> temp = jdbcTemplate.query(SQL, new NutritionMapper());
-        // System.out.println("Number of results from the query: %d" + temp.size());
-        for (int i=0; i<temp.size(); i++) {
-            System.out.println("Results from the database: " + temp.get(i).getName());
-        }
-        // System.out.println("Results from the database: " + temp.toString());
-        return temp.get(0); 
+    //     List<Nutrition> temp = jdbcTemplate.query(SQL, new NutritionMapper());
+    //     return temp.get(0);
+    // }
+
+    @GetMapping("/food/{name}") //get food by name and return its nutrition info
+    public List<Nutrition> foodByName(@PathVariable String name) {
+        String query = """
+            SELECT *
+            FROM `sampleFoods`
+            WHERE name LIKE '%%%s%%'
+        """;
+        String SQL = String.format(query, name);
+
+        return jdbcTemplate.query(SQL, new NutritionMapper());
     }
 }
     

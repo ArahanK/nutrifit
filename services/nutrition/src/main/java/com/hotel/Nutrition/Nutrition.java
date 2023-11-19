@@ -42,30 +42,24 @@ public class Nutrition {
         this.protein = protein;
         this.carbs = carbs;
         this.fat = fat;
-        // Default constructor
     }
 
     // Setters
     public void setFoodID(Long foodID){
         this.foodID = foodID;
     }
-
     public void setName(String name){
         this.name = name;
     }
-
     public void setCalories(int calories){
         this.calories = calories;
     }
-
     public void setProtein(int protein){
         this.protein = protein;
     }
-
     public void setCarbs(int carbs){
         this.carbs = carbs;
     }
-
     public void setFat(int fat){
         this.fat = fat;
     }

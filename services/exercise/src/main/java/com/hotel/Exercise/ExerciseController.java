@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 class ExerciseController {
-    private final ExerciseRepository repo;
+    private final ExerciseRepository exerciseRepository;
 
-    ExerciseController(ExerciseRepository repo){
-        this.repo = repo;
+    ExerciseController(ExerciseRepository exerciseRepository){
+        this.exerciseRepository = exerciseRepository;
     }
 
     @GetMapping("/TestExercise")
