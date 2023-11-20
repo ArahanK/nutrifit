@@ -1,22 +1,43 @@
-// Login.js
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Use Link from react-router-dom for navigation
-import 'bootstrap/dist/css/bootstrap.min.css'; // Make sure to import Bootstrap CSS
+import { useNavigate, Link } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate(); // Initialize the useNavigate hook
+  const navigate = useNavigate();
 
   const handleLogin = (event) => {
     event.preventDefault();
-    if (email === "3311@gmail.com" && password === "password") {
-      localStorage.setItem('isLoggedIn', 'true'); // For demonstration purposes only
-      navigate('/options'); // Navigate to the options page
-    } else {
-      alert('Invalid credentials'); // Placeholder for error handling
-    }
+
+    // Set up the requestOptions object
+    const requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+
+    // Construct the URL with the user-entered email and password
+    const url = `http://localhost:3005/confirm-user?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
+
+    // Perform the fetch request
+    fetch(url, requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        console.log(result);
+        // Assuming the result is '1' for a successful login
+        if (result === '1') {
+          localStorage.setItem('isLoggedIn', 'true');
+          navigate('/options');
+        } else {
+          alert('Invalid credentials');
+        }
+      })
+      .catch(error => {
+        console.log('error', error);
+        alert('Login failed. Please try again later.');
+      });
   };
+
 
   return (
     <div className="container mt-5">
@@ -62,5 +83,7 @@ function Login() {
     </div>
   );
 }
+
+
 
 export default Login;
