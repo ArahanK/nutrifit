@@ -1,103 +1,78 @@
+// App.js
 import React from 'react';
-import * as ReactDOM from 'react-dom';
-
-import { getChartData } from './Data';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-//import { labels, data } from './Data';
+import Login from './Login';
+import SignUp from './SignUp';
+import Options from './Options';
+import RequireAuth from './RequireAuth';
 
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import PredictFatLoss from './PredictFatLoss'
+import VisualizeCalories from './VisualizeCalories'
+import VisualizeNutrients from './VisualizeNutrients'
+import DietLogPage from './DietLogPage'
+import ExerciseLogPage from './ExerciseLogPage'
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-export const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top',
-    },
-    title: {
-      display: true,
-      text: 'Chart.js Bar Chart',
-    },
-  },
-};
-
-export let labels = [];
-export let values = [];
-
-
-export function temp(){
-  var t =  prompt("Enter a food please");
-  console.log(t);
-  var requestOptions = {
-    method: 'GET',
-    redirect: 'follow'
-  };
-  //alert()
-  fetch("http://localhost:8080/SpecificFood?food="+t, requestOptions)
-    .then(response => response.text())
-    .then(result => console.log(result))
-    .catch(error => console.log('error', error));
-}
-
-export function calories(){
-  var requestOptions = {
-    method: 'GET',
-    redirect: 'follow'
-  };
-  //alert()
-  fetch("http://localhost:8080/CaloriesBurnt", requestOptions)
-  .then((response) => response.json())
-  .then((data) => {
-    let temp = data;
-    labels = temp[0];
-    values = temp[1];
-   // values.add(temp[1]);
-    console.log(labels);
-    console.log(values);
-    let data2= {
-      labels,
-      datasets: [
-        {
-          data: values
-        },
-      ],
-    };
-    const container = document.getElementById('root');
-const root = ReactDOM.createRoot(container);
-root.render(<Bar options={options} data={data2}/>);
-  })    
-  .catch(function(){
-    console.log("ERROR")
-  });
-}
-
-export function App() {
-
+function App() {
   return (
-    <div>
-      <h1>Charts</h1>
-      <button onClick={temp}>GET FOOD NAME</button>
-      <button onClick={calories}>GET CALORIES BURNT</button>
-      <button onClick={getChartData}>Get Chart Data</button>
-      <div id="root"></div>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route
+          path="/options"
+          element={
+            <RequireAuth>
+              <Options />
+            </RequireAuth>
+          }
+        />
+
+        <Route path="/" element={<Navigate replace to="/login" />} />
+        <Route
+            path="/predict-fat-loss"
+                element={
+                    <RequireAuth>
+                        <PredictFatLoss /> {/* Protected LogExercise Route */}
+                    </RequireAuth>
+            }
+        />
+        <Route
+                  path="/visualize-calories"
+                  element={
+                    <RequireAuth>
+                      <VisualizeCalories/> {/* Protected LogExercise Route */}
+                    </RequireAuth>
+                  }
+                />
+        <Route
+                          path="/visualize-nutrients"
+                          element={
+                            <RequireAuth>
+                              <VisualizeNutrients/> {/* Protected LogExercise Route */}
+                            </RequireAuth>
+                          }
+                        />
+        <Route
+                          path="/diet-log-page"
+                          element={
+                            <RequireAuth>
+                              <DietLogPage/> {/* Protected LogExercise Route */}
+                            </RequireAuth>
+                          }
+                        />
+        <Route
+                          path="/exercise-log-page"
+                          element={
+                            <RequireAuth>
+                              <ExerciseLogPage/> {/* Protected LogExercise Route */}
+                            </RequireAuth>
+                          }
+                        />
+
+
+        {/* ...other routes */}
+      </Routes>
+    </Router>
   );
 }
 
