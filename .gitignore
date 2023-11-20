@@ -49,5 +49,10 @@ build/
 .vscode/
 .DS_STORE
 
+<<<<<<< HEAD
+#these /out files randomly appeared, so I added them to the gitignore
+/out/*
+=======
 # out files
 /out
+>>>>>>> 5afae690bc3fc1e8bca3ae7717a30647d83733a0
