@@ -3,12 +3,6 @@ package com.hotel.user;
 //import Services.ExerciseService;
 // import Services.Nutrition;
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.util.Date;
 
 
 //-----------------User Class-----------------//
@@ -19,7 +13,10 @@ import java.util.Date;
 @Entity
 @Table(name = "userInfo")
 public class User {
-    @Id
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name = "userID")
+    private long userId;
+
     @Column(name = "email") 
     private String email;
 
@@ -39,17 +36,18 @@ public class User {
     private String sex;
 
     @Column(name = "weight")
-    private double weight;
+    private int weight;
 
     @Column(name = "height")
-    private double height;
+    private int height;
 
 
     public User() {
         // Default constructor
     }   
 
-    public User(String email, String password, String firstName, String lastName, int age, String sex, int weight, int height) {
+    public User(long userID, String email, String password, String firstName, String lastName, int age, String sex, int weight, int height) {
+        this.userId = userID;
         this.email = email;
         this.password = password;  
         this.firstName = firstName; 
@@ -62,6 +60,9 @@ public class User {
 
 
     // Setters
+    public void setUserId(long userId){
+        this.userId = userId;
+    }
     public void setEmail(String email){
         this.email = email;
     }
@@ -88,6 +89,9 @@ public class User {
     }
 
     //Getters
+    public long getUserId(){
+        return this.userId;
+    }
     public String getEmail(){
         return this.email;
     }  
@@ -106,11 +110,15 @@ public class User {
     public String getSex(){
         return this.sex;
     }
-    // public int getWeight(){
-    //     return this.weight;
-    // }
-    // public int getHeight(){
-    //     return this.height;
-    // }   
+    public int getWeight(){
+        return this.weight;
+    }
+    public int getHeight(){
+        return this.height;
+    }   
+
+    public void addEntry(String date, String foodName, int servings) {
+        //???
+    }
     
 }

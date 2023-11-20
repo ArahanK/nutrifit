@@ -6,6 +6,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 public class NutritionController {
@@ -62,6 +64,26 @@ public class NutritionController {
 
         return jdbcTemplate.query(SQL, new NutritionMapper());
     }
+
+    // @PostMapping("/addFood/{name}/{calories}/{protein}/{carbs}/{fat}") //test adding a food to the db
+    // public void addFood(
+    //     @PathVariable String foodName,
+    //     @PathVariable int calories, 
+    //     @PathVariable int protein,
+    //     @PathVariable int carbs, 
+    //     @PathVariable int fat) {
+    //     // nutritionRepository.addFood(foodName, calories, protein, carbs, fat);
+
+    //     String query = """
+    //         INSERT INTO `sampleFoods` (name, calories, protein, carbs, fat)
+    //         VALUES ('%s', %d, %d, %d, %d)
+    //     """;    
+    //     String SQL = String.format(query, foodName, calories, protein, carbs, fat);
+    //     jdbcTemplate.update(SQL);
+    // }
+
+   
+
 }
     
 

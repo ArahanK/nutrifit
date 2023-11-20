@@ -12,9 +12,9 @@ public class UserApplication {
 		SpringApplication.run(UserApplication.class, args);
 
 		// User userTest = new User("testEmail@gmail.com", "password", "Bob", "McBobby", 54, "male", 200, 90);
-		// userTest.addEntry.("2023-11-16", "Apple", 2);
+		// userTest.addEntry("2021-04-01", "apple", 1);
 
-        // List<FoodLog.FoodEntry> entriesForUser1 = user1.getFoodLog().getEntries();
+        // List<FoodLog.FoodEntry> entriesForUser1 = userTest.getFoodLog().getEntries();
 
 		// System.out.println("User 1: " + entriesForUser1);	
 	}
