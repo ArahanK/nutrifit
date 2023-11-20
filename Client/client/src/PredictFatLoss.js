@@ -32,7 +32,7 @@ function PredictFatLoss() {
       redirect: 'follow'
     };
 
-    fetch(`http://localhost:8081/predict-fat-loss?email=3311@gmail.com&date=${selectedDate}&weight=${weight}`, requestOptions)
+    fetch(`http://localhost:3005/predict-fat-loss?email=3311@gmail.com&date=${selectedDate}&weight=${weight}`, requestOptions)
       .then(response => response.text())
       .then(result => {
         console.log(result);
