@@ -130,7 +130,7 @@ export function addData(email, duration, exerciseType, date, intensity){
     redirect: 'follow'
   };
 
-  fetch("http://localhost:8081/LogExercise?email="+email+"&type="+exerciseType+"&length="+duration+"&date="+date+"&intensity="+intensity, requestOptions)
+  fetch("http://localhost:3005/LogExercise?email="+email+"&type="+exerciseType+"&length="+duration+"&date="+date+"&intensity="+intensity, requestOptions)
     .then(response => response.text())
     .then(result => console.log(result))
     .catch(error => console.log('error', error));

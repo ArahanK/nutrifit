@@ -39,7 +39,7 @@ function SignUp() {
       height
     }).toString();
 
-    fetch(`http://localhost:8081/users?${queryParams}`, requestOptions)
+    fetch(`http://localhost:3005/users?${queryParams}`, requestOptions)
       .then(response => response.text())
       .then(result => {
         console.log(result);
