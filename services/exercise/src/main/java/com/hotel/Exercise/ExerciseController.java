@@ -11,19 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @RestController
 class ExerciseController {
-<<<<<<< HEAD
-    private final ExerciseRepository exerciseRepository;
-
-    ExerciseController(ExerciseRepository exerciseRepository){
-        this.exerciseRepository = exerciseRepository;
-=======
     private final JdbcTemplate jdbcTemplate;
    //need to get this value from user service
    int userWeight = 65;
 
     ExerciseController(JdbcTemplate jdbcTemplate){
         this.jdbcTemplate = jdbcTemplate;
->>>>>>> 5afae690bc3fc1e8bca3ae7717a30647d83733a0
     }
 
 
