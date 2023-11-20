@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 
 //-----------------User Class-----------------//
 // this still needs to be connected to the database 
-// and the foodlog class and exerciselog class??
+//  exerciselog class
 //--------------------------------------------//
 
 @Entity
