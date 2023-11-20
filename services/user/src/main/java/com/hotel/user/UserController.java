@@ -36,6 +36,9 @@ public class UserController {
         return "Hello, this is a test for User!";
     }
 
+    //--------------------------------------------//
+    //----------------user methods----------------//
+    //--------------------------------------------//
     @GetMapping("/getAllUsers") //get all users in db
     public List<User> user() {
         String query = """
@@ -61,8 +64,6 @@ public class UserController {
 
     }
 
-    
-
     @GetMapping("/user/{email}") //get user by email and return its info
     public List<User> userByEmail(@PathVariable String email) {
         String query = """
@@ -76,8 +77,17 @@ public class UserController {
         return temp;
     }
 
+    //get user by id
 
-   //-----foodlog setters and getters-----//
+    //get user by email and password
+
+    //delete user by email
+
+    //update user by email and password
+    
+    //-----------------------------------------------//
+    //----------------foodlog methods----------------//
+    //-----------------------------------------------//
    @PostMapping("/user/AddEntry") //only works if user exists
    public ResponseEntity<Object> addEntry(@RequestBody FoodLog foodLog) {
         String apiUrl = nutritionServiceBaseURL + "food/" + foodLog.getFoodName();
@@ -130,4 +140,42 @@ public class UserController {
             throw new IllegalArgumentException("Invalid JSON format");
         }
     }
+
+    //delete food log entry
+
+    //update food log entry
+
+    //get food log entries by email
+
+    // get food log entries by date 
+    
+    // get food log entries by date range
+
+    // get food log entries by food name
+
+
+    //---------------------------------------------------//
+    //----------------exerciselog methods----------------//
+    //---------------------------------------------------//
+
+
+    
+    //add exercise log entry
+
+    //delete exercise log entry
+
+    //update exercise log entry
+
+    //get exercise log entries by email
+
+    // get exercise log entries by date
+
+    // get exercise log entries by date range
+
+    // get exercise log entries by exercise name
+
+    
+
+
+
 }
