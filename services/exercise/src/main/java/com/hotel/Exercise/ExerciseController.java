@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.sql.Date;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
+import java.util.Map;
 
 
 @RestController
@@ -113,13 +114,27 @@ class ExerciseController {
     @GetMapping("/users")
     public void addUser(@RequestParam String email, @RequestParam String password, @RequestParam String First_name, @RequestParam String last_name, @RequestParam int Age, 
     @RequestParam String Sex, @RequestParam int weight, @RequestParam int height){
-      String SQL = "INSERT INTO users.userInfo (Email, Password, firstName, lastName, Age, Sex, Weight, height) VALUES ('" + email + "', '" + password + "', '" + First_name + "', '" + last_name + "', " + Age + ", '" + Sex + "', " + weight + ", " + height + ")";
-      jdbcTemplate.update(SQL);
+      jdbcTemplate.update(
+    "INSERT INTO users.userInfo (email, password, firstName, lastName, age, sex, weight, height) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    email, password, First_name, last_name, Age, Sex, weight, height
+    );
+
     }
 
     @GetMapping("/visualize-top-5")
-    public void visualizeTop5Nutrients(@RequestParam String email, @RequestParam("date") Date startDate, @RequestParam("date") Date endDate) {
+    public List<Map<String, Object>> visualizeTop5Nutrients(@RequestParam String email, @RequestParam("date") Date startDate, @RequestParam("date") Date endDate) {
       String SQL = "SELECT SUM(protein) AS total_protein, SUM(carbs) AS total_carbs, SUM(fat) AS total_fat, SUM(kcal) AS total_kcal FROM test_diet.test_diet_table WHERE email = '" + email + "' AND date BETWEEN '" + startDate + "' AND '" + endDate + "'";
-      jdbcTemplate.queryForList(SQL);
+
+      return jdbcTemplate.queryForList(SQL);
     }
+
+    @GetMapping("/confirm-user")
+    public int confirmLogin(@RequestParam String email, @RequestParam String password) {
+    String SQL = "SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END AS IsMatch FROM users.userInfo WHERE email = ? AND password = ?";
+    int isMatch = jdbcTemplate.queryForObject(SQL, new Object[]{email, password}, Integer.class);
+    return isMatch;
+}
+
+
+    
   }
