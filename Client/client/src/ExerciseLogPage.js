@@ -89,7 +89,7 @@ function ExerciseLogPage() {
             <option value="running">Running</option>
             <option value="walking">Walking</option>
             <option value="swimming">Swimming</option>
-            <option value="weightlifting">Weightlifting</option>
+            <option value="weightLifting">Weightlifting</option>
           </select>
           <select name="intensity" value={newLog.intensity} onChange={handleInputChange} style={{ padding: '10px', marginBottom: '10px', borderRadius: '10px', border: '1px solid #ccc', width: '100%' }}>
             <option value="">Select Intensity</option>

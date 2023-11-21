@@ -38,12 +38,12 @@ class ExerciseController {
       }
 
       //Calculations for biking
-      if(type.equals("biking") && intensity.equals("low")){
+      if(type.equals("walking") && intensity.equals("low")){
+        caloriesBurnt = ((userWeight * 2)/200) * length;
+      }else if(type.equals("walking") && intensity.equals("medium")){
+        caloriesBurnt = ((userWeight * 3)/200) * length;
+      }else if(type.equals("walking") && intensity.equals("high")){
         caloriesBurnt = ((userWeight * 4)/200) * length;
-      }else if(type.equals("biking") && intensity.equals("medium")){
-        caloriesBurnt = ((userWeight * 6)/200) * length;
-      }else if(type.equals("biking") && intensity.equals("high")){
-        caloriesBurnt = ((userWeight * 8)/200) * length;
       }
 
       //Calculations for swiming
@@ -55,12 +55,12 @@ class ExerciseController {
         caloriesBurnt = ((userWeight * 10)/200) * length;
       }
 
-      //Calculations for others, assuming others is assorted weightlifting
-      if(type.equals("others") && intensity.equals("low")){
+      //Calculations for weightlifting
+      if(type.equals("weightLifting") && intensity.equals("low")){
         caloriesBurnt = ((userWeight * 3)/200) * length;
-      }else if(type.equals("others") && intensity.equals("medium")){
+      }else if(type.equals("weightLifting") && intensity.equals("medium")){
         caloriesBurnt = ((userWeight * 4)/200) * length;
-      }else if(type.equals("others") && intensity.equals("high")){
+      }else if(type.equals("weightLifting") && intensity.equals("high")){
         caloriesBurnt = ((userWeight * 5)/200) * length;
       }
 
