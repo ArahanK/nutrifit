@@ -53,6 +53,17 @@ public class UserController {
         String apiUrl = userServiceBaseURL + "user/" + user.getUserId();
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(apiUrl, String.class);
+        
+        //Validate some basic password criteria
+        String password = user.getPassword();
+        String specialCharacter = ".*[^a-z0-9 ].*";
+        String number = ".*[0-9].*";
+        String uppercase = ".*[A-Z].*";
+        if(password.length() < 8 || !password.matches(specialCharacter)
+           || !password.matches(number) || !password.matches(uppercase)){
+            //can return more info abt whats spefically wrong when refactor
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
 
         String query = """
             INSERT INTO `userInfo` (email, password, firstName, lastName, age, sex, weight, height)
