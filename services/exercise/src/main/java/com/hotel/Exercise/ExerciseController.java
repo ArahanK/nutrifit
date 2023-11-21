@@ -27,41 +27,41 @@ class ExerciseController {
 
     @PostMapping("/LogExercise")
     public void addExercise( @RequestParam String email, @RequestParam String type, @RequestParam int length,@RequestParam("date") Date date, @RequestParam String intensity){
-      int caloriesBurnt = 0;
+      double caloriesBurnt = 0;
       //Calculations for running
       if(type.equals("running") && intensity.equals("low")){
-        caloriesBurnt = ((userWeight * 7)/200) * length;
+        caloriesBurnt = ( (double) (userWeight * 7)/200) * length;
       }else if(type.equals("running") && intensity.equals("medium")){
-        caloriesBurnt = ((userWeight * 9)/200) * length;
+        caloriesBurnt = ( (double) (userWeight * 9)/200) * length;
       }else if(type.equals("running") && intensity.equals("high")){
-        caloriesBurnt = ((userWeight * 12)/200) * length;
+        caloriesBurnt = ( (double) (userWeight * 12)/200) * length;
       }
 
-      //Calculations for biking
+      //Calculations for walking
       if(type.equals("walking") && intensity.equals("low")){
-        caloriesBurnt = ((userWeight * 2)/200) * length;
+        caloriesBurnt =  ( (double) (userWeight * 3)/200) * length;
       }else if(type.equals("walking") && intensity.equals("medium")){
-        caloriesBurnt = ((userWeight * 3)/200) * length;
+        caloriesBurnt = ((double) (userWeight * 4)/200) * length;
       }else if(type.equals("walking") && intensity.equals("high")){
-        caloriesBurnt = ((userWeight * 4)/200) * length;
+        caloriesBurnt = ( (double) (userWeight * 5)/200) * length;
       }
 
-      //Calculations for swiming
+      //Calculations for swimming
       if(type.equals("swimming") && intensity.equals("low")){
-        caloriesBurnt = ((userWeight * 4)/200) * length;
+        caloriesBurnt = ( (double) (userWeight * 4)/200) * length;
       }else if(type.equals("swimming") && intensity.equals("medium")){
-        caloriesBurnt = ((userWeight * 7)/200) * length;
+        caloriesBurnt = ( (double) (userWeight * 7)/200) * length;
       }else if(type.equals("swimming") && intensity.equals("high")){
-        caloriesBurnt = ((userWeight * 10)/200) * length;
+        caloriesBurnt = ( (double) (userWeight * 10)/200) * length;
       }
 
       //Calculations for weightlifting
       if(type.equals("weightLifting") && intensity.equals("low")){
-        caloriesBurnt = ((userWeight * 3)/200) * length;
+        caloriesBurnt = ( (double) (userWeight * 3)/200) * length;
       }else if(type.equals("weightLifting") && intensity.equals("medium")){
-        caloriesBurnt = ((userWeight * 4)/200) * length;
+        caloriesBurnt = ( (double) (userWeight * 4)/200) * length;
       }else if(type.equals("weightLifting") && intensity.equals("high")){
-        caloriesBurnt = ((userWeight * 5)/200) * length;
+        caloriesBurnt = ( (double) (userWeight * 5)/200) * length;
       }
 
       String SQL = "INSERT INTO exercise.exercise_log (email, type, length, date, intensity, caloriesBurnt) VALUES ("+"'"+email+"'"+","+"'"+ type +"'"+" ,"+"'"+length+"'"+","+"'"+date+"','"+intensity+"','"+caloriesBurnt+"')";
