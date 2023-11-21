@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const BMR = 1500; // Replace with real calculation
+
 function ExerciseLogPage() {
-  const [logs, setLogs] = useState([]);
-  const [newLog, setNewLog] = useState({
+  let [logs, setLogs] = useState([]);
+  let [newLog, setNewLog] = useState({
     date: '',
     time: '',
     duration: '',
@@ -24,11 +26,13 @@ function ExerciseLogPage() {
 
   const addLog = () => {
     const { date, time, duration, exerciseType, intensity } = newLog;
-    addData("3311@gmail.com", duration, exerciseType, date, intensity)
+
     if (!date || !time || !duration || !exerciseType || !intensity) {
       alert('Please enter all fields before submitting.');
       return;
     }
+
+    addData("test5@nutrifit.com", duration, exerciseType, date, intensity, newLog, setLogs, logs, setNewLog);
 
     // Check for overlapping workouts
     const startTime = new Date(`${date}T${time}`);
@@ -44,24 +48,6 @@ function ExerciseLogPage() {
       return;
     }
 
-    // Placeholder for calories burned and BMR calculation
-    const caloriesBurned = 100; // Replace with real calculation
-    const BMR = 1500; // Replace with real calculation
-
-    const newExerciseLog = {
-      ...newLog,
-      caloriesBurned,
-      BMR
-    };
-
-    setLogs([...logs, newExerciseLog]);
-    setNewLog({
-      date: '',
-      time: '',
-      duration: '',
-      exerciseType: '',
-      intensity: ''
-    });
   };
 
   const deleteLog = (index) => {
@@ -89,7 +75,7 @@ function ExerciseLogPage() {
             <option value="running">Running</option>
             <option value="walking">Walking</option>
             <option value="swimming">Swimming</option>
-            <option value="weightlifting">Weightlifting</option>
+            <option value="weightLifting">Weightlifting</option>
           </select>
           <select name="intensity" value={newLog.intensity} onChange={handleInputChange} style={{ padding: '10px', marginBottom: '10px', borderRadius: '10px', border: '1px solid #ccc', width: '100%' }}>
             <option value="">Select Intensity</option>
@@ -123,16 +109,43 @@ function ExerciseLogPage() {
     </div>
   );
 }
-export function addData(email, duration, exerciseType, date, intensity){
+export async function addData(email, duration, exerciseType, date, intensity, newLog, setLogs, logs, setNewLog){
   
   var requestOptions = {
     method: 'POST',
     redirect: 'follow'
   };
 
-  fetch("http://localhost:3005/LogExercise?email="+email+"&type="+exerciseType+"&length="+duration+"&date="+date+"&intensity="+intensity, requestOptions)
+  await fetch("http://localhost:3005/LogExercise?email="+email+"&type="+exerciseType+"&length="+duration+"&date="+date+"&intensity="+intensity, requestOptions)
     .then(response => response.text())
     .then(result => console.log(result))
     .catch(error => console.log('error', error));
+
+  var requestOptions = {
+    method: 'GET',
+    redirect: 'follow'
+  };
+  
+  await fetch("http://localhost:3005/CaloriesBurntOn?email="+email+"&day="+date, requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log(result.toString());
+      let newExerciseLog = {
+        ...newLog,
+        caloriesBurned: result,
+        BMR
+      };
+  
+      setLogs([...logs, newExerciseLog]);
+      setNewLog({
+        date: '',
+        time: '',
+        duration: '',
+        exerciseType: '',
+        intensity: ''
+      });
+    })
+    .catch(error => console.log('error', error));
+
 }
 export default ExerciseLogPage;
