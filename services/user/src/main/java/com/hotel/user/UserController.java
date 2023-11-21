@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -72,10 +73,10 @@ public class UserController {
         jdbcTemplate.update(query, user.getEmail(), user.getPassword(), user.getFirstName(),user.getLastName(), user.getAge(), user.getSex(), user.getWeight(), user.getHeight());
 
          return ResponseEntity.status(HttpStatus.OK).body(null);
-
     }
 
-    @GetMapping("/user/{email}") //get user by email and return its info
+    //get user by email and return its info
+    @GetMapping("/user/email/{email}") 
     public List<User> userByEmail(@PathVariable String email) {
         String query = """
             SELECT *
@@ -89,12 +90,32 @@ public class UserController {
     }
 
     //get user by id
+     //todo: edit to hide password
+    @GetMapping("/user/id/{id}") 
+    public List<User> userById(@PathVariable String id) {
+        String query = """
+            SELECT *
+            FROM `userInfo`
+            WHERE userId LIKE '%%%s%%'
+        """;
+        String SQL = String.format(query, id);
 
-    //get user by email and password
+        List<User> temp = jdbcTemplate.query(SQL, new UserMapper());
+        return temp;
+    }
 
     //delete user by email
+    @DeleteMapping("/user/deleteUser/{email}")
+    public ResponseEntity<Object> deleteUser(@RequestBody User user) {
+        String query = """
+            DELETE FROM `userInfo`
+            WHERE email = ?
+        """;
+        jdbcTemplate.update(query, user.getEmail());
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
 
-    //update user by email and password
+    //todo: update user by email and password verification 
     
     //-----------------------------------------------//
     //----------------foodlog methods----------------//
