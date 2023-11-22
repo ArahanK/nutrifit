@@ -1,6 +1,9 @@
 package com.hotel.Exercise;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -109,16 +112,6 @@ class ExerciseController {
     public int returnFatLossWeight(@RequestParam String email, @RequestParam("date") Date date, @RequestParam int weight) {
       
       return 1000;
-    }
-
-    @GetMapping("/users")
-    public void addUser(@RequestParam String email, @RequestParam String password, @RequestParam String First_name, @RequestParam String last_name, @RequestParam int Age, 
-    @RequestParam String Sex, @RequestParam int weight, @RequestParam int height){
-      jdbcTemplate.update(
-    "INSERT INTO users.userInfo (email, password, firstName, lastName, age, sex, weight, height) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-    email, password, First_name, last_name, Age, Sex, weight, height
-    );
-
     }
 
     @GetMapping("/visualize-top-5")

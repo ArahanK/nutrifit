@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,6 +48,26 @@ public class UserController {
                 FROM `userInfo`
             """;
         return jdbcTemplate.query(query, new UserMapper());
+    }
+    //Method being used my frontend which arahan made
+    @PostMapping("/user/AddNewUser")
+    public ResponseEntity<Object> addUser(@RequestParam String email, @RequestParam String password, @RequestParam String First_name, @RequestParam String last_name, @RequestParam int Age, 
+    @RequestParam String Sex, @RequestParam int weight, @RequestParam int height){
+
+       String specialCharacter = ".*[^a-z0-9 ].*";
+        String number = ".*[0-9].*";
+        String uppercase = ".*[A-Z].*";
+        if(password.length() < 8 || !password.matches(specialCharacter)
+           || !password.matches(number) || !password.matches(uppercase)){
+            //can return more info abt whats spefically wrong when refactor
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        }
+      jdbcTemplate.update(
+    "INSERT INTO users.userInfo (email, password, firstName, lastName, age, sex, weight, height) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    email, password, First_name, last_name, Age, Sex, weight, height
+    );
+    return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/user/addUser") //add user to db (need to add error handling   
