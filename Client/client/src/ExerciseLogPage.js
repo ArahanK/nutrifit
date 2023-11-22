@@ -32,7 +32,7 @@ function ExerciseLogPage() {
       return;
     }
 
-    addData("test5@nutrifit.com", duration, exerciseType, date, intensity, newLog, setLogs, logs, setNewLog);
+    addData(window.emailGlobalVar, duration, exerciseType, date, intensity, newLog, setLogs, logs, setNewLog);
 
     // Check for overlapping workouts
     const startTime = new Date(`${date}T${time}`);

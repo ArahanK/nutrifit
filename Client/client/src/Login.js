@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
+
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,7 +29,10 @@ function Login() {
         // Assuming the result is '1' for a successful login
         if (result === '1') {
           localStorage.setItem('isLoggedIn', 'true');
+          window.emailGlobalVar = email;
           navigate('/options');
+          
+          
         } else {
           alert('Invalid credentials');
         }
