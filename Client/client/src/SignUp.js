@@ -24,7 +24,7 @@ function SignUp() {
     }
 
     var requestOptions = {
-      method: 'GET',
+      method: 'POST',
       redirect: 'follow'
     };
 
@@ -39,11 +39,13 @@ function SignUp() {
       height
     }).toString();
 
-    fetch(`http://localhost:3005/users?${queryParams}`, requestOptions)
-      .then(response => response.text())
-      .then(result => {
-        console.log(result);
-        navigate('/options'); // Navigate to login page after successful sign up
+    fetch(`http://localhost:8081/user/AddNewUser?${queryParams}`, requestOptions)
+      .then(response => {
+        if(response.status === 400){
+          alert("BAD PASSWORD");
+        }else{
+          navigate('/options');
+        }
       })
       .catch(error => console.log('error', error));
   };
