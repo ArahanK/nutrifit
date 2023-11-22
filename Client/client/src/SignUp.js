@@ -44,6 +44,7 @@ function SignUp() {
         if(response.status === 400){
           alert("BAD PASSWORD");
         }else{
+          window.emailGlobalVar = email; 
           navigate('/options');
         }
       })

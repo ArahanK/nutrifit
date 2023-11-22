@@ -12,6 +12,8 @@ import VisualizeNutrients from './VisualizeNutrients'
 import DietLogPage from './DietLogPage'
 import ExerciseLogPage from './ExerciseLogPage'
 
+window.emailGlobalVar = null;
+
 function App() {
   return (
     <Router>
