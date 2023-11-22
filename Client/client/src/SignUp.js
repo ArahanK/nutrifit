@@ -41,8 +41,8 @@ function SignUp() {
 
     fetch(`http://localhost:8081/user/AddNewUser?${queryParams}`, requestOptions)
       .then(response => {
-        if(response.status === 400){
-          alert("BAD PASSWORD");
+        if(response.status === 400 || response.status === 500){
+          alert("Please ensure you are using a unique email address and password meets requirements");
         }else{
           window.emailGlobalVar = email; 
           navigate('/options');
