@@ -55,14 +55,23 @@ public class UserController {
     @RequestParam String Sex, @RequestParam int weight, @RequestParam int height){
 
        String specialCharacter = ".*[^a-z0-9 ].*";
-        String number = ".*[0-9].*";
-        String uppercase = ".*[A-Z].*";
+       String number = ".*[0-9].*";
+       String uppercase = ".*[A-Z].*";
         if(password.length() < 8 || !password.matches(specialCharacter)
            || !password.matches(number) || !password.matches(uppercase)){
             //can return more info abt whats spefically wrong when refactor
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
         }
+        //Validate email does not exist 100% a better way to do this but just using this for now
+        String emailQuery = "SELECT email FROM users.userInfo";
+        List<String> temp = jdbcTemplate.queryForList(emailQuery, String.class);
+
+        for(int i = 0; i < temp.size(); i++){
+            if(email.equals(temp.get(i))){
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }
+
       jdbcTemplate.update(
     "INSERT INTO users.userInfo (email, password, firstName, lastName, age, sex, weight, height) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
     email, password, First_name, last_name, Age, Sex, weight, height
@@ -86,7 +95,6 @@ public class UserController {
             //can return more info abt whats spefically wrong when refactor
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
-
         String query = """
             INSERT INTO `userInfo` (email, password, firstName, lastName, age, sex, weight, height)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
