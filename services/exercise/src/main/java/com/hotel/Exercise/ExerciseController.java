@@ -99,7 +99,7 @@ class ExerciseController {
     @GetMapping("/AverageCaloriesBurnt")
     public int getAvrgCalories( @RequestParam String email, @RequestParam int days){
       //On frontend we can calculate the days between the two dates
-      String SQL1 = "SELECT caloriesBurnt FROM exercise.exercise_log WHERE email = "+"'"+email+"'"+" ORDER BY date DESC LIMIT "+days;
+      String SQL1 = "SELECT caloriesBurnt FROM exercise.exercise_log WHERE email = "+"'"+email+"'"+" ORDER BY date DESC";
       List<Integer> temp = jdbcTemplate.queryForList(SQL1, Integer.class);
       int total = 0;
       for(int i = 0; i < temp.size(); i++){
@@ -126,8 +126,5 @@ class ExerciseController {
     String SQL = "SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END AS IsMatch FROM users.userInfo WHERE email = ? AND password = ?";
     int isMatch = jdbcTemplate.queryForObject(SQL, new Object[]{email, password}, Integer.class);
     return isMatch;
-}
-
-
-    
   }
+}
