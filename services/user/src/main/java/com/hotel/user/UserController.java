@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.web.reactive.function.client.WebClient;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import reactor.core.publisher.Mono;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,11 +23,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 public class UserController {
+
     
     private final JdbcTemplate jdbcTemplate;
     private final UserRepository userRepository;
     private String nutritionServiceBaseURL = "http://localhost:8080/";
+    private String exerciseServiceBaseURL = "http://localhost:3005/";
     private String userServiceBaseURL = "http://localhost:8081/";
+
+    WebClient exercise = WebClient.create(exerciseServiceBaseURL);
 
     UserController(UserRepository userRepository, JdbcTemplate jdbcTemplate){
         this.userRepository = userRepository;
@@ -132,6 +137,30 @@ public class UserController {
         """;
         jdbcTemplate.update(query, user.getEmail());
         return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @GetMapping("/user/weightLoss/{email}/{days}") 
+    public Integer predictWeightLoss(@PathVariable String email, @PathVariable int days) {  
+      //Gets average calories burnt from exercise service
+      Mono<Integer> caloriesLost = exercise.get()
+      .uri("AverageCaloriesBurnt?email="+email+"&days="+days)
+      .retrieve()
+      .bodyToMono(Integer.class);
+     //Gets average calories consumed 
+      String SQL = "SELECT calories FROM users.foodLogs WHERE email = "+"'"+email+"'"+" ORDER BY dateAdded DESC";
+      List<Integer> temp = jdbcTemplate.queryForList(SQL, Integer.class);
+      int total = 0;
+      for(int i = 0; i < temp.size(); i++){
+        total+=temp.get(i);
+      }
+      int caloriesGained = total/days;
+      //Does some calculation to find how much calories a user lost
+      int cLost = caloriesLost.block();
+      if(caloriesGained > cLost){
+        return -1;
+      } 
+      int difference = Math.abs((caloriesGained - cLost)) * days;
+      return difference * days;
     }
 
     //todo: update user by email and password verification 

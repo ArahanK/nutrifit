@@ -31,17 +31,28 @@ function PredictFatLoss() {
       method: 'GET',
       redirect: 'follow'
     };
+    var second = new Date(selectedDate).toISOString().split('T')[0];
+    var diff = new Date(second) - new Date(today);
 
-    fetch(`http://localhost:3005/predict-fat-loss?email=3311@gmail.com&date=${selectedDate}&weight=${weight}`, requestOptions)
+    console.log(selectedDate);
+    console.log(today);
+    var days = diff / (1000 * 60 * 60 * 24);
+    console.log(days)
+
+    fetch("http://localhost:8081/user/weightLoss/"+window.emailGlobalVar+"/"+days, requestOptions)
       .then(response => response.text())
-      .then(result => {
-        console.log(result);
-        setPredictionResult(result);
+      .then(result =>{
+        if(result == -1){
+          setPredictionResult("You will not lose any weight as your consuming more calories then you are burning");
+        }else{
+          setPredictionResult((result/3500) + "LBS");
+        }
       })
       .catch(error => {
         console.log('error', error);
         setPredictionResult("Error in prediction!");
       });
+
   };
 
   const handleBack = () => {
