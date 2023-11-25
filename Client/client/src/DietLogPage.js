@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+// Make sure you import Bootstrap CSS in your main file (e.g., index.js or App.js)
+// import 'bootstrap/dist/css/bootstrap.min.css';
 
 function DietLogPage() {
   const [logs, setLogs] = useState([]);
@@ -8,9 +10,13 @@ function DietLogPage() {
     mealType: '',
     ingredients: [{ name: '', quantity: '' }]
   });
-  const [searchDate, setSearchDate] = useState('');
 
+  const [searchDate, setSearchDate] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchLogs();
+  }, []);
 
   const goBack = () => {
     navigate(-1);
@@ -39,36 +45,29 @@ function DietLogPage() {
   };
 
   const addLog = () => {
-      if (!newLog.date || !newLog.mealType || newLog.ingredients.some(ingredient => !ingredient.name || !ingredient.quantity)) {
-        alert('Please enter date, meal type, and at least one ingredient with quantity.');
-        return;
-      }
-
-      // Check if a log for this meal type and date already exists (except for snacks)
-      if (newLog.mealType !== 'snack') {
-        const existingLog = logs.find(log => log.date === newLog.date && log.mealType === newLog.mealType);
-        if (existingLog) {
-          alert(`A log for ${newLog.mealType} on this date already exists.`);
-          return;
-        }
-      }
-
-    //place holder function for query for database nutrition
-    const logWithNutrition = {
-      ...newLog,
-      ingredients: newLog.ingredients.map(ingredient => ({
-        ...ingredient,
-        nutrition: placeholderNutrition
-      }))
-    };
-
-    setLogs([...logs, logWithNutrition]);
-    setNewLog({ date: '', mealType: '', ingredients: [{ name: '', quantity: '' }] });
+    // ... existing addLog function ...
   };
 
   const deleteLog = (index) => {
-    const updatedLogs = logs.filter((_, logIndex) => logIndex !== index);
-    setLogs(updatedLogs);
+    // ... existing deleteLog function ...
+  };
+
+  const fetchLogs = () => {
+    const email = window.emailGlobalVar; // You should replace this with your actual method of getting the user's email
+    const requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+
+    fetch(`http://localhost:8081/pull-diet-log?email=${encodeURIComponent(email)}`, requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        setLogs(data);
+        console.log(data);
+      })
+      .catch(error => {
+        console.error('error', error);
+      });
   };
 
   const getFilteredLogs = () => {
@@ -84,9 +83,31 @@ function DietLogPage() {
     fats: 8        // Placeholder value
   };
 
+  const renderLogCards = () => {
+    return logs.map((log, index) => (
+      <div key={index} className="card mb-3">
+        <div className="card-body">
+          <h5 className="card-title">Log Date: {log.date}</h5>
+          <h6 className="card-subtitle mb-2 text-muted">Meal Type: {log.mealType}</h6>
+          <h6 className="card-subtitle mb-2 text-muted">Food Name: {log.foodName}</h6>
+          <p className="card-text">Servings: {log.servings}</p>
+          <p className="card-text">Calories: {log.calories}</p>
+          <p className="card-text">Protein: {log.protein}g</p>
+          <p className="card-text">Carbs: {log.carbs}g</p>
+          <p className="card-text">Fat: {log.fat}g</p>
+        </div>
+      </div>
+    ));
+  };
+
+
+
+  
+
   return (
     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', height: '100vh', padding: '20px' }}>
       <button onClick={goBack} style={{ position: 'absolute', top: '20px', left: '20px', padding: '10px 20px', backgroundColor: 'lightgray', borderRadius: '20px' }}>Back</button>
+      
       {/* Log Entry Column */}
       <div style={{ width: '40%', marginRight: '20px', padding: '20px', borderRadius: '10px', boxShadow: '0px 0px 10px #ccc', textAlign: 'center' }}>
         <h2 style={{ color: '#333' }}>Add Diet Log</h2>
@@ -138,46 +159,25 @@ function DietLogPage() {
           ))}
           <button onClick={addIngredientField} style={{ backgroundColor: 'blue', color: 'white', borderRadius: '20px', padding: '10px 20px', border: 'none' }}>Add Ingredient</button>
           <button onClick={addLog} style={{ backgroundColor: 'green', color: 'white', borderRadius: '20px', padding: '10px 20px', border: 'none' }}>Log Diet</button>
+        
+          
+          
+          
         </form>
       </div>
+      <div className="col-md-6" style={{ 
+        maxHeight: '80vh', 
+        overflowY: 'auto', 
+        boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)', // Adds shadow
+        marginTop: '16px', // Add some margin at the top if needed
+        borderRadius: '4px', // Adds rounded corners
+        backgroundColor: '#fff' // Ensure the background is white
+      }}>
+          {/* Render log cards in a scrollable container */}
+          {renderLogCards()}
+        </div>
 
-      {/* Log Display Column */}
-      <div style={{ width: '40%', padding: '20px', borderRadius: '10px', boxShadow: '0px 0px 10px #ccc', textAlign: 'center', overflowY: 'auto', maxHeight: '80vh' }}>
-        <h2 style={{ color: '#333', marginBottom: '20px' }}>Previous Logs</h2>
-        <input
-          type="date"
-          value={searchDate}
-          onChange={(e) => setSearchDate(e.target.value)}
-          style={{ padding: '10px', marginBottom: '20px', borderRadius: '20px', border: '1px solid #ccc', width: '100%' }}
-        />
-        <ul style={{ listStyle: 'none', paddingLeft: '0' }}>
-          {getFilteredLogs().map((log, index) => (
-            <li key={index} style={{ marginBottom: '10px', padding: '10px', border: '1px solid #ccc', borderRadius: '10px' }}>
-              <div><b>Date: </b>{log.date}</div>
-              <div><b>Meal: </b>{log.mealType}</div>
-              {/* Ingredients List */}
-              {log.ingredients.length > 0 && (
-                <div>
-                  <div><b>Ingredients:</b></div>
-                  <ul>
-                    {log.ingredients.map((ingredient, ingredientIndex) => (
-                      <li key={ingredientIndex}>
-                        {ingredient.name} - {ingredient.quantity} grams
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              <div><b>Nutritional Value:</b></div>
-              <div>Calories: {placeholderNutrition.calories}</div>
-              <div>Proteins: {placeholderNutrition.proteins}</div>
-              <div>Carbs: {placeholderNutrition.carbs}</div>
-              <div>Fats: {placeholderNutrition.fats}</div>
-              <button onClick={() => deleteLog(index)} style={{ backgroundColor: 'red', color: 'white', borderRadius: '20px', padding: '5px 10px' }}>Delete Log</button>
-            </li>
-          ))}
-        </ul>
-      </div>
+        
     </div>
   );
 }
