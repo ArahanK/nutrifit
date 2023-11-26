@@ -114,12 +114,7 @@ class ExerciseController {
       return 1000;
     }
 
-    @GetMapping("/visualize-top-5")
-    public List<Map<String, Object>> visualizeTop5Nutrients(@RequestParam String email, @RequestParam("date") Date startDate, @RequestParam("date") Date endDate) {
-      String SQL = "SELECT SUM(protein) AS total_protein, SUM(carbs) AS total_carbs, SUM(fat) AS total_fat, SUM(kcal) AS total_kcal FROM test_diet.test_diet_table WHERE email = '" + email + "' AND date BETWEEN '" + startDate + "' AND '" + endDate + "'";
-
-      return jdbcTemplate.queryForList(SQL);
-    }
+    
 
     @GetMapping("/confirm-user")
     public int confirmLogin(@RequestParam String email, @RequestParam String password) {

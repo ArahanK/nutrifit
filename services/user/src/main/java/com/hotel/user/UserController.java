@@ -1,10 +1,12 @@
 package com.hotel.user;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -167,11 +169,45 @@ public class UserController {
       return difference * days;
     }
 
-    @PostMapping("/user/AddEntry") //only works if user exists
-   public void addIngredientEntry(@RequestBody FoodLog foodlog)                                              
-    {
+    @PostMapping("/user/AddEntry") // only works if user exists
+public void addIngredientEntry(@RequestBody List<FoodLog> foodLogs) {
+    // Assuming all FoodLog objects have the same email, date, and mealType
+    FoodLog foodLogFinal = new FoodLog();
+    foodLogFinal.setEmail(foodLogs.get(0).getEmail());
+    foodLogFinal.setDate(foodLogs.get(0).getDate());
+    foodLogFinal.setMealType(foodLogs.get(0).getMealType());
+
+    // Initialize sums
+    int totalServings = 0;
+    int totalCalories = 0;
+    int totalProtein = 0;
+    int totalCarbs = 0;
+    int totalFat = 0;
+    StringBuilder foodNames = new StringBuilder();
+
+    // Aggregate values from all FoodLog entries
+    for (FoodLog log : foodLogs) {
+        totalServings += log.getServings();
+        totalCalories += log.getCalories();
+        totalProtein += log.getProtein();
+        totalCarbs += log.getCarbs();
+        totalFat += log.getFat();
+        if (foodNames.length() > 0) {
+            foodNames.append(", ");
+        }
+        foodNames.append(log.getFoodName());
+    }
+
+    // Set aggregated values
+    foodLogFinal.setFoodName(foodNames.toString());
+    foodLogFinal.setServings(totalServings);
+    foodLogFinal.setCalories(totalCalories);
+    foodLogFinal.setProtein(totalProtein);
+    foodLogFinal.setCarbs(totalCarbs);
+    foodLogFinal.setFat(totalFat);
+
         String SQL = "INSERT INTO users.foodLogs (email, foodName, dateAdded, servings, calories, protein, carbs, fat, mealType) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(SQL, foodlog.getEmail(), foodlog.getFoodName(), foodlog.getDate(), foodlog.getServings(), foodlog.getCalories(), foodlog.getProtein(), foodlog.getCarbs(), foodlog.getFat(), foodlog.getMealType());
+        jdbcTemplate.update(SQL, foodLogFinal.getEmail(), foodLogFinal.getFoodName(), foodLogFinal.getDate(), foodLogFinal.getServings(), foodLogFinal.getCalories(), foodLogFinal.getProtein(), foodLogFinal.getCarbs(), foodLogFinal.getFat(), foodLogFinal.getMealType());
     }
 
     @GetMapping("/confirm-user")
@@ -203,18 +239,20 @@ public class UserController {
         });
     }
 
-    @PostMapping("/get-nutrition")
-    public void getNutritionValues(@RequestParam String email, @RequestParam String food, @RequestParam int quantity, @RequestParam String mealType, @RequestParam String date) {
+    @GetMapping("/get-nutrition")
+    public FoodLog getNutritionValues(@RequestParam String email, @RequestParam String food, @RequestParam int quantity, @RequestParam String mealType, @RequestParam String date) {
         FoodLog foodlog = new FoodLog();
+        System.out.println("NUMBER: " + quantity);
         String SQLCalories = "SELECT `calories` FROM cnf.sampleFoods WHERE `name` = ?";
-        int caloriecount = (jdbcTemplate.queryForObject(SQLCalories, new Object[]{food}, Integer.class))*(quantity/100);
+        int calorieCount = (int)(jdbcTemplate.queryForObject(SQLCalories, new Object[]{food}, Integer.class) * ((double)quantity / 100));
+        System.out.println("NUMBER: " + calorieCount);
         String SQLProtein = "SELECT `protein` FROM cnf.sampleFoods WHERE `name` = ?";
-        int proteincount = jdbcTemplate.queryForObject(SQLProtein, new Object[]{food}, Integer.class)*(quantity/100);
+        int proteincount = (int)(jdbcTemplate.queryForObject(SQLProtein, new Object[]{food}, Integer.class) * ((double)quantity / 100));
         String SQLCarbs = "SELECT `carbs` FROM cnf.sampleFoods WHERE `name` = ?";
-        int carbcount = jdbcTemplate.queryForObject(SQLCarbs, new Object[]{food}, Integer.class)*(quantity/100);
+        int carbcount = (int)(jdbcTemplate.queryForObject(SQLCarbs, new Object[]{food}, Integer.class) * ((double)quantity / 100));
         String SQLfat = "SELECT `fat` FROM cnf.sampleFoods WHERE `name` = ?";
-        int fatcount = jdbcTemplate.queryForObject(SQLfat, new Object[]{food}, Integer.class)*(quantity/100);
-        foodlog.setCalories(caloriecount);
+        int fatcount = (int)(jdbcTemplate.queryForObject(SQLfat, new Object[]{food}, Integer.class) * ((double)quantity / 100));
+        foodlog.setCalories(calorieCount);
         foodlog.setFoodName(food);
         foodlog.setProtein(proteincount);
         foodlog.setCarbs(carbcount);
@@ -222,8 +260,8 @@ public class UserController {
         foodlog.setServings(quantity);
         foodlog.setEmail(email);
         foodlog.setDate(date);
-        foodlog.setMealType(mealType);
-        addIngredientEntry(foodlog);
+        foodlog.setMealType(mealType);       
+        return foodlog;
     }
 
     @GetMapping("check-multiple-mealtype")
@@ -242,6 +280,14 @@ public class UserController {
         int check = jdbcTemplate.queryForObject(SQL, new Object[]{email, date, mealType}, Integer.class);
         return check;
     }
+
+    @GetMapping("/visualize-top-5")
+    public List<Map<String, Object>> visualizeTop5Nutrients(@RequestParam String email, @RequestParam String startDate, @RequestParam String endDate) {
+        String SQL = "SELECT SUM(protein) AS total_protein, SUM(carbs) AS total_carbs, SUM(fat) AS total_fat, SUM(calories) AS total_kcal FROM users.foodLogs WHERE email = '" + email + "' AND dateAdded BETWEEN '" + startDate + "' AND '" + endDate + "'";
+      return jdbcTemplate.queryForList(SQL);
+    }
+
+    
 
     //todo: update user by email and password verification 
     
