@@ -45,8 +45,73 @@ function DietLogPage() {
   };
 
   const addLog = () => {
-    // ... existing addLog function ...
+    // Setup headers for the POST request to send the food logs
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+  
+    // Create a promise array to hold fetch promises for each ingredient
+    const fetchPromises = newLog.ingredients.slice(0, 5).map(ingredient => {
+      if (ingredient.name && ingredient.quantity) {
+
+        // Construct the URL with the proper query parameters
+        const url = `http://localhost:8081/get-nutrition?email=${encodeURIComponent(window.emailGlobalVar)}&food=${encodeURIComponent(ingredient.name)}&quantity=${encodeURIComponent(ingredient.quantity)}&mealType=${encodeURIComponent(newLog.mealType)}&date=${encodeURIComponent(newLog.date)}`;
+        // Fetch nutrition data for each ingredient
+        return fetch(url)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            console.log(response.json);
+            return response.json();
+          })
+          .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+            return null; // Return null in case of error to filter out later
+          });
+      }
+      return Promise.resolve(null); // If no name or quantity, resolve to null
+    });
+  
+    // Use Promise.all to wait for all fetch requests to complete
+    Promise.all(fetchPromises).then(results => {
+      // Filter out any null results from errors and then process the results
+      const validResults = results.filter(result => result);
+  
+      // Prepare the array of food logs to be sent
+      var raw = JSON.stringify(validResults);
+  
+      var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+  
+      // Post the food logs to the server
+      fetch("http://localhost:8081/user/AddEntry", requestOptions)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok for POST request');
+          }
+          return response.text();
+        })
+        .then(result => {
+          
+          // Here you can handle the response, update the UI or state as needed
+          // For example, you might want to clear the newLog or fetch the logs again to update the list
+          setNewLog({
+            date: '',
+            mealType: '',
+            ingredients: [{ name: '', quantity: '' }]
+          });
+          fetchLogs();
+        })
+        .catch(error => {
+          console.error('There was a problem with the POST operation:', error);
+        });
+    });
   };
+  
 
   const deleteLog = (index) => {
     // ... existing deleteLog function ...
@@ -63,7 +128,7 @@ function DietLogPage() {
       .then(response => response.json())
       .then(data => {
         setLogs(data);
-        console.log(data);
+        
       })
       .catch(error => {
         console.error('error', error);
@@ -90,7 +155,7 @@ function DietLogPage() {
           <h5 className="card-title">Log Date: {log.date}</h5>
           <h6 className="card-subtitle mb-2 text-muted">Meal Type: {log.mealType}</h6>
           <h6 className="card-subtitle mb-2 text-muted">Food Name: {log.foodName}</h6>
-          <p className="card-text">Servings: {log.servings}</p>
+          <p className="card-text">Servings: {log.servings}g</p>
           <p className="card-text">Calories: {log.calories}</p>
           <p className="card-text">Protein: {log.protein}g</p>
           <p className="card-text">Carbs: {log.carbs}g</p>
