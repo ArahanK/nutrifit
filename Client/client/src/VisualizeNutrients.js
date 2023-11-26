@@ -16,7 +16,12 @@ function VisualizeNutrients() {
   const handleSubmit = (event) => {
     event.preventDefault();
     // Logic to handle visualization of calorie intake
-    console.log('Start Date:', startDate, 'End Date:', endDate);
+    var end = new Date(endDate).toISOString().split('T')[0];
+    var start = new Date(startDate).toISOString().split('T')[0];
+    var diff = new Date(end) - new Date(start);
+    var days = diff / (1000 * 60 * 60 * 24);
+    console.log("Days: "+ days);
+    //console.log('Start Date:', startDate, 'End Date:', endDate);
   };
 
   return (
