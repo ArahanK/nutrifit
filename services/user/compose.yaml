@@ -1,7 +1,0 @@
-version: '0.01'
-services:
-  user-service:
-    build: user
-    container_name: user
-    ports:
-      - "8080:8080"
