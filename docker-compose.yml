@@ -5,8 +5,13 @@ services:
     container_name: nutrition
     ports:
       - "8080:8080"
-  execise-service:
-    build: services/execise
-    container_name: execise
+  exercise-service:
+    build: services/exercise
+    container_name: exercise
+    ports:
+      - "3005:3005"
+  user-service:
+    build: services/user
+    container_name: user
     ports:
       - "8081:8081"

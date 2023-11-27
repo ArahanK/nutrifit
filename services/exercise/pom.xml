@@ -11,7 +11,7 @@
 	<groupId>com.hotel</groupId>
 	<artifactId>exercise</artifactId>
 	<version>0.0.1</version>
-	<name>Execise</name>
+	<name>Exercise</name>
 	<description>EECS3311 2023 Fall Project Nutrion Microservice</description>
 	<properties>
 		<java.version>17</java.version>
