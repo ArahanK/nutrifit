@@ -45,6 +45,7 @@ function SignUp() {
           alert("Please ensure you are using a unique email address and password meets requirements");
         }else{
           window.emailGlobalVar = email; 
+          localStorage.setItem('email', email);
           navigate('/options');
         }
       })
