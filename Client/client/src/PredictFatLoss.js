@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 
 function PredictFatLoss() {
+  const email = localStorage.getItem('email');
   const [selectedDate, setSelectedDate] = useState('');
   const [weight, setWeight] = useState('');
   const [weightUnit, setWeightUnit] = useState('kg'); // 'kg' or 'lbs'
@@ -39,7 +40,7 @@ function PredictFatLoss() {
     var days = diff / (1000 * 60 * 60 * 24);
     console.log(days)
 
-    fetch("http://localhost:8081/user/weightLoss/"+window.emailGlobalVar+"/"+days, requestOptions)
+    fetch("http://localhost:8081/user/weightLoss/"+email+"/"+days, requestOptions)
       .then(response => response.text())
       .then(result =>{
         if(result == -1){

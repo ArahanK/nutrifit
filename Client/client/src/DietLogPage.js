@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 function DietLogPage() {
+  const email = localStorage.getItem('email');
   const [logs, setLogs] = useState([]);
   const [newLog, setNewLog] = useState({
     date: '',
@@ -54,7 +55,7 @@ function DietLogPage() {
       if (ingredient.name && ingredient.quantity) {
 
         // Construct the URL with the proper query parameters
-        const url = `http://localhost:8081/get-nutrition?email=${encodeURIComponent(window.emailGlobalVar)}&food=${encodeURIComponent(ingredient.name)}&quantity=${encodeURIComponent(ingredient.quantity)}&mealType=${encodeURIComponent(newLog.mealType)}&date=${encodeURIComponent(newLog.date)}`;
+        const url = `http://localhost:8081/get-nutrition?email=${encodeURIComponent(email)}&food=${encodeURIComponent(ingredient.name)}&quantity=${encodeURIComponent(ingredient.quantity)}&mealType=${encodeURIComponent(newLog.mealType)}&date=${encodeURIComponent(newLog.date)}`;
         // Fetch nutrition data for each ingredient
         return fetch(url)
           .then(response => {
@@ -118,7 +119,6 @@ function DietLogPage() {
   };
 
   const fetchLogs = () => {
-    const email = window.emailGlobalVar; // You should replace this with your actual method of getting the user's email
     const requestOptions = {
       method: 'GET',
       redirect: 'follow'

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const BMR = 1500; // Replace with real calculation
 
 function ExerciseLogPage() {
+  const email = localStorage.getItem('email');
   let [logs, setLogs] = useState([]);
   let [newLog, setNewLog] = useState({
     date: '',
@@ -37,7 +38,7 @@ function ExerciseLogPage() {
       return;
     }
 
-    addData(window.emailGlobalVar, duration, exerciseType, date, intensity, newLog, setLogs, logs, setNewLog);
+    addData(email, duration, exerciseType, date, intensity, newLog, setLogs, logs, setNewLog);
 
     // Check for overlapping workouts
     const startTime = new Date(`${date}T${time}`);
@@ -65,7 +66,6 @@ function ExerciseLogPage() {
   };
   const fetchExerciseLogs = () => {
       // Fetch exercise logs for the current user
-      const email = window.emailGlobalVar; // Replace with actual email retrieval logic
       fetch(`http://localhost:8081/pull-exercise-log?email=${encodeURIComponent(email)}`)
         .then(response => response.json())
         .then(data => {

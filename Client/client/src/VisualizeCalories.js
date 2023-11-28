@@ -57,19 +57,26 @@ function VisualizeCalories() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const navigate = useNavigate();
+  const chartContainer = document.createElement('div');
+  chartContainer.id = 'chart-container';
+  var count = 0;
 
   const handleBack = () => {
+    if(count >= 1){
+      document.getElementById('root').removeChild(chartContainer)
+    }
     navigate('/options');
   };
 
   // Add more logic for form submission and validation as needed
   const handleSubmit = async (event) => {
+    count++;
     event.preventDefault();
     // Logic to handle visualization of calorie intake
     var end = new Date(endDate).toISOString().split('T')[0];
     var start = new Date(startDate).toISOString().split('T')[0];
     
-    const email = window.emailGlobalVar; 
+    const email = localStorage.getItem('email');
 
     var requestOptions = {
       method: 'GET',
@@ -121,8 +128,6 @@ function VisualizeCalories() {
       const root = ReactDOM.createRoot(container);
       root.render(<Bar options={options} data={data}/>);
       */
-      const chartContainer = document.createElement('div');
-      chartContainer.id = 'chart-container';
       document.getElementById('root').appendChild(chartContainer);
       render(<Bar options={options} data={data} />, chartContainer);
     } catch (error){

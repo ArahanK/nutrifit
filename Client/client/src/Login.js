@@ -30,6 +30,7 @@ function Login() {
         if (result === '1') {
           localStorage.setItem('isLoggedIn', 'true');
           window.emailGlobalVar = email;
+          localStorage.setItem('email', email);
           navigate('/options');
           
           
