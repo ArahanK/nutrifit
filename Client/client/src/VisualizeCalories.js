@@ -89,9 +89,6 @@ function VisualizeCalories() {
         var d = 1;
         result.forEach(foodLog => {
         var tempDate = new Date(foodLog.date).toISOString().split('T')[0];
-        console.log("Start Date: "+ startDate);
-        console.log("Temp Date: "+ tempDate);
-        console.log("End Date: "+ endDate);
           if(start <= tempDate && tempDate <= end){
             labels.push(d);
             values.push(foodLog.calories);
