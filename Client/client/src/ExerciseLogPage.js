@@ -115,8 +115,6 @@ function ExerciseLogPage() {
               <div><strong>Exercise Type:</strong> {log.exerciseType}</div>
               <div><strong>Intensity:</strong> {log.intensity}</div>
               <div><strong>Calories Burned:</strong> {log.caloriesBurned}</div>
-              <div><strong>BMR:</strong> {log.BMR}</div>
-              <button onClick={() => deleteLog(index)} style={{ backgroundColor: 'red', color: 'white', borderRadius: '20px', padding: '5px 10px' }}>Delete Log</button>
             </li>
           ))}
         </ul>
