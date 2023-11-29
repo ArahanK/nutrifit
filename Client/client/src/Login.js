@@ -12,21 +12,21 @@ function Login() {
   const handleLogin = (event) => {
     event.preventDefault();
 
-    // Set up the requestOptions object
+    
     const requestOptions = {
       method: 'GET',
       redirect: 'follow'
     };
 
-    // Construct the URL with the user-entered email and password
+    
     const url = `http://localhost:8081/confirm-user?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`;
 
-    // Perform the fetch request
+    
     fetch(url, requestOptions)
       .then(response => response.text())
       .then(result => {
         console.log(result);
-        // Assuming the result is '1' for a successful login
+        
         if (result === '1') {
           localStorage.setItem('isLoggedIn', 'true');
           window.emailGlobalVar = email;

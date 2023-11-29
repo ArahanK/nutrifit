@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const BMR = 1500; // Replace with real calculation
+const BMR = 1500; 
 
 function ExerciseLogPage() {
   const email = localStorage.getItem('email');
@@ -65,7 +65,7 @@ function ExerciseLogPage() {
     return searchDate ? logs.filter(log => log.date === searchDate) : logs;
   };
   const fetchExerciseLogs = () => {
-      // Fetch exercise logs for the current user
+      
       fetch(`http://localhost:8081/pull-exercise-log?email=${encodeURIComponent(email)}`)
         .then(response => response.json())
         .then(data => {
@@ -78,7 +78,7 @@ function ExerciseLogPage() {
     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', height: '100vh', padding: '20px' }}>
       <button onClick={goBack} style={{ position: 'absolute', top: '20px', left: '20px', padding: '10px 20px', backgroundColor: 'lightgray', borderRadius: '20px' }}>Back</button>
 
-      {/* Exercise Log Entry Column */}
+      
       <div style={{ width: '40%', marginRight: '20px', padding: '20px', borderRadius: '10px', boxShadow: '0px 0px 10px #ccc', textAlign: 'center' }}>
         <h2 style={{ color: '#333' }}>Add Exercise Log</h2>
         <form onSubmit={(e) => e.preventDefault()} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -102,7 +102,7 @@ function ExerciseLogPage() {
         </form>
       </div>
 
-      {/* Exercise Log Display Column */}
+      
       <div style={{ width: '40%', padding: '20px', borderRadius: '10px', boxShadow: '0px 0px 10px #ccc', textAlign: 'center', overflowY: 'auto', maxHeight: '80vh' }}>
         <h2 style={{ color: '#333', marginBottom: '20px' }}>Previous Logs</h2>
         <input type="date" value={searchDate} onChange={(e) => setSearchDate(e.target.value)} style={{ padding: '10px', marginBottom: '20px', borderRadius: '20px', border: '1px solid #ccc', width: '100%' }} />

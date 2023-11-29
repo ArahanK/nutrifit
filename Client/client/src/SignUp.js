@@ -17,7 +17,7 @@ function SignUp() {
   const handleSignUp = (event) => {
     event.preventDefault();
     
-    // Add validation for confirmPassword and password to match
+    
     if (password !== confirmPassword) {
       console.error('Passwords do not match');
       return;

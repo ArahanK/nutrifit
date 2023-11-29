@@ -11,6 +11,8 @@ import VisualizeCalories from './VisualizeCalories'
 import VisualizeNutrients from './VisualizeNutrients'
 import DietLogPage from './DietLogPage'
 import ExerciseLogPage from './ExerciseLogPage'
+import EditProfile from './Edit';
+import FoodGuideRecommendation from './FoodGuideRecommendation';
 
 window.emailGlobalVar = null;
 
@@ -20,11 +22,20 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        
         <Route
           path="/options"
           element={
             <RequireAuth>
               <Options />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/FoodGuideRecommendation"
+          element={
+            <RequireAuth>
+              <FoodGuideRecommendation />
             </RequireAuth>
           }
         />
@@ -38,6 +49,16 @@ function App() {
                     </RequireAuth>
             }
         />
+
+<Route
+            path="/edit"
+                element={
+                    <RequireAuth>
+                        <EditProfile /> {/* Protected LogExercise Route */}
+                    </RequireAuth>
+            }
+        />
+
         <Route
                   path="/visualize-calories"
                   element={

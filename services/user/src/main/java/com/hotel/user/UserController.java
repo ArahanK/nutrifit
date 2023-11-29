@@ -52,10 +52,8 @@ public class UserController {
         return "Hello, this is a test for User!";
     }
 
-    //--------------------------------------------//
-    //----------------user methods----------------//
-    //--------------------------------------------//
-    @GetMapping("/getAllUsers") //get all users in db
+
+    @GetMapping("/getAllUsers") 
     public List<User> user() {
         String query = """
                     SELECT *
@@ -83,26 +81,26 @@ public class UserController {
         LocalDate endLocalDate = LocalDate.parse(endDate, DateTimeFormatter.ISO_LOCAL_DATE);
         long daysUntilTarget = ChronoUnit.DAYS.between(LocalDate.now(), endLocalDate);
 
-        // Calculate the daily deficit from diet
+        
         int dailyDietDeficit = BMR - averageCalorieIntake;
 
-        // Get the average calories burnt from exercise
+        
         double dailyExerciseCalories = averageCalsBurnt;
 
-        // Calculate the total daily calorie deficit
+        
         double totalDailyDeficit = dailyDietDeficit + dailyExerciseCalories;
 
-        // Calculate the total deficit over the period until the target date
+        
         double totalCalorieDeficit = totalDailyDeficit * daysUntilTarget;
 
-        // Estimate the weight loss using the 3,500 calories per pound rule
+        
         double estimatedWeightLoss = totalCalorieDeficit / 3500.0;
 
-        // Calculate the estimated weight after the loss
+        
         return currentWeight - estimatedWeightLoss;
     }
 
-    //Method being used my frontend which arahan made
+    
     @PostMapping("/user/AddNewUser")
     public ResponseEntity<Object> addUser(@RequestParam String email, @RequestParam String password, @RequestParam String First_name, @RequestParam String last_name, @RequestParam int Age,
                                           @RequestParam String Sex, @RequestParam int weight, @RequestParam int height) {
@@ -112,7 +110,7 @@ public class UserController {
         String uppercase = ".*[A-Z].*";
         if (password.length() < 8 || !password.matches(specialCharacter)
                 || !password.matches(number) || !password.matches(uppercase)) {
-            //can return more info abt whats spefically wrong when refactor
+            
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         jdbcTemplate.update(
@@ -122,13 +120,13 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/user/addUser") //add user to db (need to add error handling   
+    @PostMapping("/user/addUser") 
     public ResponseEntity<Object> addUser(@RequestBody User user) {
         String apiUrl = userServiceBaseURL + "user/" + user.getUserId();
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(apiUrl, String.class);
 
-        //Validate some basic password criteria
+        
         String password = user.getPassword();
         String specialCharacter = ".*[^a-z0-9 ].*";
         String number = ".*[0-9].*";
@@ -147,9 +145,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-    //get user by email and return its info
-    @GetMapping("/user/email/{email}")
-    public List<User> userByEmail(@PathVariable String email) {
+    
+    @GetMapping("/getUserEmail")
+    public User userByEmail(@RequestParam String email) {
         String query = """
                     SELECT *
                     FROM `userInfo`
@@ -157,7 +155,7 @@ public class UserController {
                 """;
         String SQL = String.format(query, email);
 
-        List<User> temp = jdbcTemplate.query(SQL, new UserMapper());
+        User temp = jdbcTemplate.queryForObject(SQL, new UserMapper());
         return temp;
     }
 
@@ -169,8 +167,8 @@ public double calculateBmrForEmail(String email) {
         public Double mapRow(ResultSet rs, int rowNum) throws SQLException {
             int age = rs.getInt("age");
             String sex = rs.getString("sex");
-            double weight = rs.getDouble("weight"); // assuming weight is stored in pounds
-            double height = rs.getDouble("height"); // assuming height is stored in inches
+            double weight = rs.getDouble("weight"); 
+            double height = rs.getDouble("height"); 
 
            
             double weightInKg = weight * 0.453592;
@@ -193,8 +191,7 @@ public double calculateBmrForEmail(String email) {
     
 }
 
-    //get user by id
-    //todo: edit to hide password
+    
     @GetMapping("/user/id/{id}")
     public List<User> userById(@PathVariable String id) {
         String query = """
@@ -219,29 +216,7 @@ public double calculateBmrForEmail(String email) {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-    @GetMapping("/user/weightLoss/{email}/{days}")
-    public Integer predictWeightLoss(@PathVariable String email, @PathVariable int days) {
-        //Gets average calories burnt from exercise service
-        Mono<Integer> caloriesLost = exercise.get()
-                .uri("AverageCaloriesBurnt?email=" + email + "&days=" + days)
-                .retrieve()
-                .bodyToMono(Integer.class);
-        //Gets average calories consumed
-        String SQL = "SELECT calories FROM users.foodLogs WHERE email = " + "'" + email + "'" + " ORDER BY dateAdded DESC";
-        List<Integer> temp = jdbcTemplate.queryForList(SQL, Integer.class);
-        int total = 0;
-        for (int i = 0; i < temp.size(); i++) {
-            total += temp.get(i);
-        }
-        int caloriesGained = total / days;
-        //Does some calculation to find how much calories a user lost
-        int cLost = caloriesLost.block();
-        if (caloriesGained > cLost) {
-            return -1;
-        }
-        int difference = Math.abs((caloriesGained - cLost)) * days;
-        return difference * days;
-    }
+    
 
     @GetMapping("/activityfactor")
     private double getTotalCaloriesBurntFromExercise(@RequestParam String email) {
@@ -268,7 +243,7 @@ public double calculateBmrForEmail(String email) {
         int totalFat = 0;
         StringBuilder foodNames = new StringBuilder();
 
-        // Aggregate values from all FoodLog entries
+        
         for (FoodLog log : foodLogs) {
             totalServings += log.getServings();
             totalCalories += log.getCalories();
@@ -281,7 +256,7 @@ public double calculateBmrForEmail(String email) {
             foodNames.append(log.getFoodName());
         }
 
-        // Set aggregated values
+        
         foodLogFinal.setFoodName(foodNames.toString());
         foodLogFinal.setServings(totalServings);
         foodLogFinal.setCalories(totalCalories);
@@ -389,6 +364,12 @@ public double calculateBmrForEmail(String email) {
         } else {
             throw new IllegalArgumentException("Invalid JSON format");
         }
+    }
+
+    @PostMapping("/updateInfo")
+    public void updateInfo(@RequestBody User user) {
+        String sql = "UPDATE userInfo SET password = ?, firstName = ?, lastName = ?, age = ?, sex = ?, weight = ?, height = ? WHERE email = ?";
+        jdbcTemplate.update(sql, new Object[]{user.getPassword(), user.getFirstName(), user.getLastName(), user.getAge(), user.getSex(), user.getWeight(), user.getHeight(), user.getEmail()});
     }
 
 

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-// Make sure you import Bootstrap CSS in your main file (e.g., index.js or App.js)
-// import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 function DietLogPage() {
   const email = localStorage.getItem('email');
@@ -46,17 +45,17 @@ function DietLogPage() {
   };
 
   const addLog = () => {
-    // Setup headers for the POST request to send the food logs
+    
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
   
-    // Create a promise array to hold fetch promises for each ingredient
+    t
     const fetchPromises = newLog.ingredients.slice(0, 5).map(ingredient => {
       if (ingredient.name && ingredient.quantity) {
 
-        // Construct the URL with the proper query parameters
+        
         const url = `http://localhost:8081/get-nutrition?email=${encodeURIComponent(email)}&food=${encodeURIComponent(ingredient.name)}&quantity=${encodeURIComponent(ingredient.quantity)}&mealType=${encodeURIComponent(newLog.mealType)}&date=${encodeURIComponent(newLog.date)}`;
-        // Fetch nutrition data for each ingredient
+        
         return fetch(url)
           .then(response => {
             if (!response.ok) {
@@ -67,18 +66,18 @@ function DietLogPage() {
           })
           .catch(error => {
             console.error('There was a problem with the fetch operation:', error);
-            return null; // Return null in case of error to filter out later
+            return null; 
           });
       }
-      return Promise.resolve(null); // If no name or quantity, resolve to null
+      return Promise.resolve(null);
     });
   
-    // Use Promise.all to wait for all fetch requests to complete
+    
     Promise.all(fetchPromises).then(results => {
-      // Filter out any null results from errors and then process the results
+      
       const validResults = results.filter(result => result);
   
-      // Prepare the array of food logs to be sent
+      
       var raw = JSON.stringify(validResults);
   
       var requestOptions = {
@@ -98,8 +97,7 @@ function DietLogPage() {
         })
         .then(result => {
           
-          // Here you can handle the response, update the UI or state as needed
-          // For example, you might want to clear the newLog or fetch the logs again to update the list
+          
           setNewLog({
             date: '',
             mealType: '',
@@ -115,7 +113,7 @@ function DietLogPage() {
   
 
   const deleteLog = (index) => {
-    // ... existing deleteLog function ...
+    
   };
 
   const fetchLogs = () => {
@@ -140,13 +138,7 @@ function DietLogPage() {
   };
 
   const ingredientsList = ["Apple", "Banana", "Strawberries", "Watermelon", "Avocado", "Spinach (raw)", "Cheese (Cheddar)", "WW Bread", "Cottage Cheese", "Salad Greens", "Almonds", "Oatmeal", "Egg (Boiled)", "Black Beans", "Broccoli (Steamed)", "Greek Yogurt", "Quinoa", "Chicken Breast", "Salmon (Baked)", "Sweet Potato", "Brown Rice"];
-//place holder values
-  const placeholderNutrition = {
-    calories: 250, // Placeholder value
-    proteins: 10,  // Placeholder value
-    carbs: 30,     // Placeholder value
-    fats: 8        // Placeholder value
-  };
+
 
   const renderLogCards = () => {
     return logs.map((log, index) => (

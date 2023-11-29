@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import 'bootstrap/dist/css/bootstrap.min.css'; 
 
 const today = new Date().toISOString().split('T')[0];
 
@@ -8,7 +8,7 @@ function PredictFatLoss() {
   const email = localStorage.getItem('email');
   const [selectedDate, setSelectedDate] = useState('');
   const [weight, setWeight] = useState('');
-  const [weightUnit, setWeightUnit] = useState('kg'); // 'kg' or 'lbs'
+  const [weightUnit, setWeightUnit] = useState('kg');
   const [predictionResult, setPredictionResult] = useState(null);
   const navigate = useNavigate();
 
@@ -60,7 +60,7 @@ function PredictFatLoss() {
       .then(response => response.text())
       .then(result => {
         BMR = result;
-        // Round the values to integers
+   
         const roundedAverageCalorieIntake = Math.round(averageCalorieIntake);
         const roundedBMR = Math.round(BMR);
         const roundedAverageCalsBurnt = Math.round(averageCalsBurnt);
@@ -71,7 +71,7 @@ function PredictFatLoss() {
             
       .then(response => response.text())
 .then(result => {
-  // Round the result to the nearest integer before displaying
+
   const roundedResult = Math.round(result);
   setPredictionResult(`Estimated Weight: ${roundedResult}`);
 })
@@ -79,7 +79,7 @@ function PredictFatLoss() {
   };
 
   const handleBack = () => {
-    navigate('/options'); // Navigate back in history
+    navigate('/options'); 
   };
 
   return (
