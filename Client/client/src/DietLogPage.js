@@ -49,7 +49,7 @@ function DietLogPage() {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
   
-    t
+    
     const fetchPromises = newLog.ingredients.slice(0, 5).map(ingredient => {
       if (ingredient.name && ingredient.quantity) {
 
