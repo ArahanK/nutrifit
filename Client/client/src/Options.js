@@ -1,7 +1,6 @@
-// Options.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure you have this import to include Bootstrap styles
+import 'bootstrap/dist/css/bootstrap.min.css'; 
 
 function Options() {
   const navigate = useNavigate();
@@ -12,14 +11,18 @@ function Options() {
   const visualizeCalories = () => navigate('/visualize-calories');
   const visualizeNutrients = () => navigate('/visualize-nutrients');
   const predictFatLoss = () => navigate('/predict-fat-loss');
-  const checkCFGAlignment = () => navigate('/check-cfg');
+  const checkCFGAlignment = () => navigate('/FoodGuideRecommendation');
+  const editProfile = () => navigate('/edit'); 
 
-  // Custom styling for buttons
-  const buttonClass = "btn btn-outline-primary rounded-3 py-3 px-4 mb-2 w-100"; // Increased y-padding for taller buttons
+  
+  const buttonClass = "btn btn-outline-primary rounded-3 py-3 px-4 mb-2 w-100"; 
 
   return (
     <div className="container py-5">
-      <h1 className="text-center mb-4">Select an Option</h1>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1>Select an Option</h1>
+        <button onClick={editProfile} className="btn btn-outline-secondary">Edit Profile</button> 
+      </div>
       <div className="row row-cols-2 g-2">
         <div className="col d-flex justify-content-center">
           <button onClick={logDiet} className={buttonClass}>

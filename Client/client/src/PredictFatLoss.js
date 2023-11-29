@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import 'bootstrap/dist/css/bootstrap.min.css'; 
+
+const today = new Date().toISOString().split('T')[0];
 
 function PredictFatLoss() {
   const email = localStorage.getItem('email');
   const [selectedDate, setSelectedDate] = useState('');
   const [weight, setWeight] = useState('');
-  const [weightUnit, setWeightUnit] = useState('kg'); // 'kg' or 'lbs'
+  const [weightUnit, setWeightUnit] = useState('kg');
   const [predictionResult, setPredictionResult] = useState(null);
   const navigate = useNavigate();
-
-  // Get today's date in YYYY-MM-DD format
-  const today = new Date().toISOString().split('T')[0];
 
   const handleDateChange = (event) => {
     setSelectedDate(event.target.value);
@@ -28,36 +27,59 @@ function PredictFatLoss() {
   const handlePredict = (event) => {
     event.preventDefault();
 
-    var requestOptions = {
+    var requestOptionsGet = {
       method: 'GET',
       redirect: 'follow'
     };
-    var second = new Date(selectedDate).toISOString().split('T')[0];
-    var diff = new Date(second) - new Date(today);
 
-    console.log(selectedDate);
-    console.log(today);
-    var days = diff / (1000 * 60 * 60 * 24);
-    console.log(days)
+    var requestOptionsPost = {
+      method: 'POST',
+      redirect: 'follow'
+    };
 
-    fetch("http://localhost:8081/user/weightLoss/"+email+"/"+days, requestOptions)
+    
+    const startDate = new Date(new Date().setDate(new Date().getDate() - 21)).toISOString().split('T')[0];
+
+    const urlAverageCalories = `http://localhost:8081/AverageCaloriesConsumed?email=${email}&startDate=${startDate}&endDate=${today}`;
+    const urlActivityFactor = `http://localhost:8081/activityfactor?email=${email}`;
+    const urlCalculateBMR = `http://localhost:8081/CalculateBMR?email=${email}`;
+
+    let averageCalorieIntake, averageCalsBurnt, BMR;
+
+    fetch(urlAverageCalories, requestOptionsGet)
       .then(response => response.text())
-      .then(result =>{
-        if(result == -1){
-          setPredictionResult("You will not lose any weight as your consuming more calories then you are burning");
-        }else{
-          setPredictionResult((result/3500) + "LBS");
-        }
+      .then(result => {
+        averageCalorieIntake = result;
+        return fetch(urlActivityFactor, requestOptionsGet);
       })
-      .catch(error => {
-        console.log('error', error);
-        setPredictionResult("Error in prediction!");
-      });
+      .then(response => response.text())
+      .then(result => {
+        averageCalsBurnt = result;
+        return fetch(urlCalculateBMR, requestOptionsGet);
+      })
+      .then(response => response.text())
+      .then(result => {
+        BMR = result;
+   
+        const roundedAverageCalorieIntake = Math.round(averageCalorieIntake);
+        const roundedBMR = Math.round(BMR);
+        const roundedAverageCalsBurnt = Math.round(averageCalsBurnt);
+      
+        const urlWeightLossFunction = `http://localhost:8081/WeightLossFunction?email=${email}&endDate=${selectedDate}&currentWeight=${weight}&averageCalorieIntake=${roundedAverageCalorieIntake}&BMR=${roundedBMR}&averageCalsBurnt=${roundedAverageCalsBurnt}`;
+        return fetch(urlWeightLossFunction, requestOptionsPost);
+      })
+            
+      .then(response => response.text())
+.then(result => {
 
+  const roundedResult = Math.round(result);
+  setPredictionResult(`Estimated Weight: ${roundedResult}`);
+})
+      .catch(error => console.log('error', error));
   };
 
   const handleBack = () => {
-    navigate('/options'); // Navigate back in history
+    navigate('/options'); 
   };
 
   return (
@@ -102,7 +124,7 @@ function PredictFatLoss() {
                   className="form-select"
                   value={weightUnit}
                   onChange={handleWeightUnitChange}
-                  style={{ maxWidth: '80px' }} // Make the dropdown smaller
+                  style={{ maxWidth: '80px' }}
                 >
                   <option value="kg">kg</option>
                   <option value="lbs">lbs</option>
@@ -112,7 +134,7 @@ function PredictFatLoss() {
             <button type="submit" className="btn btn-primary mt-3">
               Predict
             </button>
-            {predictionResult !== null && <div className="mt-3">Prediction: {predictionResult}</div>}
+            {predictionResult !== null && <div className="mt-3">{predictionResult}</div>}
           </form>
         </div>
       </div>

@@ -4,6 +4,9 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,10 +52,8 @@ public class UserController {
         return "Hello, this is a test for User!";
     }
 
-    //--------------------------------------------//
-    //----------------user methods----------------//
-    //--------------------------------------------//
-    @GetMapping("/getAllUsers") //get all users in db
+
+    @GetMapping("/getAllUsers") 
     public List<User> user() {
         String query = """
                     SELECT *
@@ -61,7 +62,45 @@ public class UserController {
         return jdbcTemplate.query(query, new UserMapper());
     }
 
-    //Method being used my frontend which arahan made
+    @GetMapping("/AverageCaloriesConsumed")
+    public double getAvgCaloriesConsumed(@RequestParam String email, @RequestParam String startDate, @RequestParam String endDate) {
+    String sqlQuery = "SELECT (SELECT COALESCE(SUM(calories), 0) FROM users.foodLogs WHERE email = ? AND dateAdded BETWEEN ? AND ?) / (SELECT COUNT(DISTINCT dateAdded) FROM users.foodLogs WHERE email = ? AND dateAdded BETWEEN ? AND ?) AS average_calories";
+
+    return jdbcTemplate.queryForObject(sqlQuery, new Object[]{email, startDate, endDate, email, startDate, endDate}, Double.class);
+
+
+}
+
+@PostMapping("/WeightLossFunction")
+ public double WeightLossFunction(@RequestParam String email,
+                                     @RequestParam String endDate,
+                                     @RequestParam int currentWeight,
+                                     @RequestParam int averageCalorieIntake,
+                                     @RequestParam int BMR,
+                                     @RequestParam int averageCalsBurnt) {
+        LocalDate endLocalDate = LocalDate.parse(endDate, DateTimeFormatter.ISO_LOCAL_DATE);
+        long daysUntilTarget = ChronoUnit.DAYS.between(LocalDate.now(), endLocalDate);
+
+        
+        int dailyDietDeficit = BMR - averageCalorieIntake;
+
+        
+        double dailyExerciseCalories = averageCalsBurnt;
+
+        
+        double totalDailyDeficit = dailyDietDeficit + dailyExerciseCalories;
+
+        
+        double totalCalorieDeficit = totalDailyDeficit * daysUntilTarget;
+
+        
+        double estimatedWeightLoss = totalCalorieDeficit / 3500.0;
+
+        
+        return currentWeight - estimatedWeightLoss;
+    }
+
+    
     @PostMapping("/user/AddNewUser")
     public ResponseEntity<Object> addUser(@RequestParam String email, @RequestParam String password, @RequestParam String First_name, @RequestParam String last_name, @RequestParam int Age,
                                           @RequestParam String Sex, @RequestParam int weight, @RequestParam int height) {
@@ -71,7 +110,7 @@ public class UserController {
         String uppercase = ".*[A-Z].*";
         if (password.length() < 8 || !password.matches(specialCharacter)
                 || !password.matches(number) || !password.matches(uppercase)) {
-            //can return more info abt whats spefically wrong when refactor
+            
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         jdbcTemplate.update(
@@ -81,13 +120,13 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/user/addUser") //add user to db (need to add error handling   
+    @PostMapping("/user/addUser") 
     public ResponseEntity<Object> addUser(@RequestBody User user) {
         String apiUrl = userServiceBaseURL + "user/" + user.getUserId();
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(apiUrl, String.class);
 
-        //Validate some basic password criteria
+        
         String password = user.getPassword();
         String specialCharacter = ".*[^a-z0-9 ].*";
         String number = ".*[0-9].*";
@@ -106,9 +145,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-    //get user by email and return its info
-    @GetMapping("/user/email/{email}")
-    public List<User> userByEmail(@PathVariable String email) {
+    
+    @GetMapping("/getUserEmail")
+    public User userByEmail(@RequestParam String email) {
         String query = """
                     SELECT *
                     FROM `userInfo`
@@ -116,12 +155,43 @@ public class UserController {
                 """;
         String SQL = String.format(query, email);
 
-        List<User> temp = jdbcTemplate.query(SQL, new UserMapper());
+        User temp = jdbcTemplate.queryForObject(SQL, new UserMapper());
         return temp;
     }
 
-    //get user by id
-    //todo: edit to hide password
+    @GetMapping("/CalculateBMR")
+public double calculateBmrForEmail(String email) {
+    String sql = "SELECT age, sex, weight, height FROM users.userInfo WHERE email = ?";
+
+    RowMapper<Double> rowMapper = new RowMapper<Double>() {
+        public Double mapRow(ResultSet rs, int rowNum) throws SQLException {
+            int age = rs.getInt("age");
+            String sex = rs.getString("sex");
+            double weight = rs.getDouble("weight"); 
+            double height = rs.getDouble("height"); 
+
+           
+            double weightInKg = weight * 0.453592;
+            double heightInCm = height * 2.54;
+
+            
+            if ("male".equalsIgnoreCase(sex)) {
+                return 88.362 + (13.397 * weightInKg) + (4.799 * heightInCm) - (5.677 * age);
+            } else if ("female".equalsIgnoreCase(sex)) {
+                return 447.593 + (9.247 * weightInKg) + (4.799 * heightInCm) - (5.677 * age);
+            } else {
+                throw new IllegalArgumentException("Invalid sex value: " + sex);
+            }
+        }
+    };
+
+
+    Double bmr = jdbcTemplate.queryForObject(sql, new Object[]{email}, rowMapper);
+    return bmr;
+    
+}
+
+    
     @GetMapping("/user/id/{id}")
     public List<User> userById(@PathVariable String id) {
         String query = """
@@ -146,28 +216,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-    @GetMapping("/user/weightLoss/{email}/{days}")
-    public Integer predictWeightLoss(@PathVariable String email, @PathVariable int days) {
-        //Gets average calories burnt from exercise service
-        Mono<Integer> caloriesLost = exercise.get()
-                .uri("AverageCaloriesBurnt?email=" + email + "&days=" + days)
-                .retrieve()
-                .bodyToMono(Integer.class);
-        //Gets average calories consumed
-        String SQL = "SELECT calories FROM users.foodLogs WHERE email = " + "'" + email + "'" + " ORDER BY dateAdded DESC";
-        List<Integer> temp = jdbcTemplate.queryForList(SQL, Integer.class);
-        int total = 0;
-        for (int i = 0; i < temp.size(); i++) {
-            total += temp.get(i);
-        }
-        int caloriesGained = total / days;
-        //Does some calculation to find how much calories a user lost
-        int cLost = caloriesLost.block();
-        if (caloriesGained > cLost) {
-            return -1;
-        }
-        int difference = Math.abs((caloriesGained - cLost)) * days;
-        return difference * days;
+    
+
+    @GetMapping("/activityfactor")
+    private double getTotalCaloriesBurntFromExercise(@RequestParam String email) {
+        String sql = "SELECT SUM(caloriesBurnt) / " +
+                     "(SELECT COUNT(DISTINCT CAST(date AS DATE)) FROM exercise.exercise_log WHERE email = ?) " +
+                     "AS averageCalories FROM exercise.exercise_log WHERE email = ?";
+
+        return jdbcTemplate.queryForObject(sql, new Object[]{email, email}, Double.class);
     }
 
     @PostMapping("/user/AddEntry") // only works if user exists
@@ -186,7 +243,7 @@ public class UserController {
         int totalFat = 0;
         StringBuilder foodNames = new StringBuilder();
 
-        // Aggregate values from all FoodLog entries
+        
         for (FoodLog log : foodLogs) {
             totalServings += log.getServings();
             totalCalories += log.getCalories();
@@ -199,7 +256,7 @@ public class UserController {
             foodNames.append(log.getFoodName());
         }
 
-        // Set aggregated values
+        
         foodLogFinal.setFoodName(foodNames.toString());
         foodLogFinal.setServings(totalServings);
         foodLogFinal.setCalories(totalCalories);
@@ -289,45 +346,7 @@ public class UserController {
     }
 
 
-    //todo: update user by email and password verification 
 
-    //-----------------------------------------------//
-    //----------------foodlog methods----------------//
-    //-----------------------------------------------//
-//    @PostMapping("/user/AddEntry") //only works if user exists
-//    public ResponseEntity<Object> addEntry(@RequestBody FoodLog foodLog) {
-//         String apiUrl = nutritionServiceBaseURL + "food/" + foodLog.getFoodName();
-
-//         // Create an instance of RestTemplate
-//         RestTemplate restTemplate = new RestTemplate();
-
-//         // Make the GET request and receive the response
-//         ResponseEntity<String> responseEntity = restTemplate.getForEntity(apiUrl, String.class);
-
-//         if(responseEntity.getBody() == null || responseEntity.getBody().isEmpty() || responseEntity.getBody().equals("[]")){
-//             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Food not found");
-//         }
-
-//         try {
-//             int[] nutritionInfo = parseNutritionInfo(responseEntity.getBody());
-//             int calories = nutritionInfo[0] * foodLog.getServings();
-//             int protein = nutritionInfo[1] * foodLog.getServings();
-//             int carbs = nutritionInfo[2] * foodLog.getServings();
-//             int fat = nutritionInfo[3] * foodLog.getServings();
-//             Instant date = Instant.now();
-
-//             String query = """
-//                 INSERT INTO `foodLogs` (email, foodName, dateAdded, servings, calories, protein, carbs, fat)
-//                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-//             """;
-
-//             jdbcTemplate.update(query, foodLog.getEmail(), foodLog.getFoodName(), date, foodLog.getServings(), calories, protein, carbs, fat);
-//         } catch (Exception e) {
-//             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error parsing JSON: " + e.getMessage());
-//         }
-
-//         return ResponseEntity.status(HttpStatus.OK).body(null);
-//     }
 
     public static int[] parseNutritionInfo(String jsonString) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -347,43 +366,13 @@ public class UserController {
         }
     }
 
-    //delete food log entry
-
-    //update food log entry
-
-    //get food log entries by email
-
-    // get food log entries by date 
-
-    // get food log entries by date range
-
-    // get food log entries by food name
+    @PostMapping("/updateInfo")
+    public void updateInfo(@RequestBody User user) {
+        String sql = "UPDATE userInfo SET password = ?, firstName = ?, lastName = ?, age = ?, sex = ?, weight = ?, height = ? WHERE email = ?";
+        jdbcTemplate.update(sql, new Object[]{user.getPassword(), user.getFirstName(), user.getLastName(), user.getAge(), user.getSex(), user.getWeight(), user.getHeight(), user.getEmail()});
+    }
 
 
-    //---------------------------------------------------//
-    //----------------exerciselog methods----------------//
-    //---------------------------------------------------//
-
-
-    //add exercise log entry
-
-    //delete exercise log entry
-
-    //update exercise log entry
-
-    //get exercise log entries by email
-
-    // get exercise log entries by date
-
-    // get exercise log entries by date range
-
-    // get exercise log entries by exercise name
-
-    // ... [Previous UserController code] ...
-
-//---------------------------------------------------//
-//----------------exerciselog methods----------------//
-//---------------------------------------------------//
 
     @GetMapping("/pull-exercise-log")
     public List<ExerciseLog> pullExerciseLogs(@RequestParam String email) {

@@ -1,4 +1,4 @@
-// VisualizeCalories.js
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { render } from 'react-dom';
@@ -65,12 +65,12 @@ function VisualizeNutrients() {
     navigate('/options');
   };
 
-  // Add more logic for form submission and validation as needed
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
     count++;
     const email = localStorage.getItem('email');
-    // Logic to handle visualization of calorie intake
+    
     var end = new Date(endDate).toISOString().split('T')[0];
     var start = new Date(startDate).toISOString().split('T')[0];
     var requestOptions = {
@@ -78,13 +78,13 @@ function VisualizeNutrients() {
       redirect: 'follow'
     };
     try{
-      //Need to change this to remove hard coded string
+      
       await fetch("http://localhost:8081/visualize-top-5?email="+email+"&startDate="+start+"&endDate="+end, requestOptions)
         .then(response => response.json())
         .then(result => {
           values = Object.values(result[0]);
           labels = Object.keys(result[0]);
-          //console.log(result[0])
+          
           console.log("labels: " + labels);
           console.log("values: " + values);
         })
